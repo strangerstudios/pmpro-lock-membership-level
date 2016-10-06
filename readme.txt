@@ -30,7 +30,7 @@ Note that a locked member will still "expire" if there is an expiration date set
 
 = I found a bug in the plugin. =
 
-Please post it in the GitHub issue tracker here: https://github.com/strangerstudios/pmpro-lock-membership0level/issues
+Please post it in the GitHub issue tracker here: https://github.com/strangerstudios/pmpro-lock-membership-level/issues
 
 = I need help installing, configuring, or customizing the plugin. =
 

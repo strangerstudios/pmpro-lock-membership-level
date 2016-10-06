@@ -24,8 +24,6 @@
 	<h2>
 		<?php _e('Locked Members List', 'pmpro');?>
 	</h2>
-	<?php
-	/*
 	<ul class="subsubsub">
 		<li>
 			<?php _e('Show', 'pmpro');?>
@@ -45,12 +43,10 @@
 	</ul>
 	<p class="search-box">
 		<label class="hidden" for="post-search-input"><?php _e('Search Members', 'pmpro');?>:</label>
-		<input type="hidden" name="page" value="pmpro-memberslist" />
+		<input type="hidden" name="page" value="pmpro-lockedmemberslist" />
 		<input id="post-search-input" type="text" value="<?php echo esc_attr($s);?>" name="s"/>
 		<input class="button" type="submit" value="<?php _e('Search Members', 'pmpro');?>"/>
 	</p>
-	*/ 
-	?>
 	<?php
 		//some vars for the search
 		if(isset($_REQUEST['pn']))

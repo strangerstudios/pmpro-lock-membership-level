@@ -91,10 +91,10 @@ function pmprolml_template_redirect()
 	//Redirect to the membership locked page if user is locked.
 	if(
 		is_page(array(
-			pmpro_getOption('levels_page_id'), 
-			pmpro_getOption('cancel_page_id'), 
-			pmpro_getOption('checkout_page_id'), 
-			pmpro_getOption('confirmation_page_id')
+			$pmpro_pages['levels'],
+			$pmpro_pages['cancel'],
+			$pmpro_pages['checkout'],
+			$pmpro_pages['confirmation']
 		)) 
 		&& !empty($pmpro_pages['membership_locked'])
 		&& in_array($current_user->ID, $locked_members)
