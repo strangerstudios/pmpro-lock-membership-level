@@ -12,7 +12,7 @@ Author URI: http://www.strangerstudios.com
 	Get lock options for a membership level
 */
 function pmprolml_getLevelOptions($level_id) {
-	return get_option('pmprolml_level_' . $level_id . '_settings', array('lock'=>0, 'expiration'=>''));
+	return get_option('pmprolml_level_' . intval($level_id) . '_settings', array('lock'=>0, 'expiration'=>''));
 }
 
 /*
@@ -160,25 +160,29 @@ function pmprolml_template_redirect() {
 	
 	if(empty($pmpro_pages))
 		return;
-	
+
+	$user_lock_options = pmprolml_getUserOptions($current_user->ID);
+		
 	//Redirect away from the membership locked page if user isn't locked.
-	if(is_page($pmpro_pages['membership_locked']) && !in_array($current_user->ID, $locked_members)) {
-		wp_redirect(pmpro_url('account'));
+	if(is_page($pmpro_pages['membership_locked']) && (empty($user_lock_options) || empty($user_lock_options['locked']))) {
+		if(pmpro_hasMembershipLevel())
+			wp_redirect(pmpro_url('account'));
+		else
+			wp_redirect(home_url());
 		exit;
 	}
 
 	//Redirect to the membership locked page if user is locked.
-	if(
-		is_page(array(
+	$locked_pages = array(
 			$pmpro_pages['levels'],
 			$pmpro_pages['cancel'],
-			$pmpro_pages['checkout']
-		)) 
-		&& !empty($pmpro_pages['membership_locked'])		
-	) {
-		$locked = get_user_meta($current_user->ID, 'pmprolml', true);
-		if(!empty($locked)) {
-			wp_redirect(pmpro_url('membership_locked'));
+			$pmpro_pages['checkout']);
+	if(is_page($locked_pages)) {
+		if(!empty($user_lock_options) && !empty($user_lock_options['locked'])) {
+			if(!empty($pmpro_pages['membership_locked']))
+				wp_redirect(pmpro_url('membership_locked'));
+			else
+				wp_redirect(home_url());
 			exit;
 		}
 	}
