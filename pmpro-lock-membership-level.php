@@ -2,7 +2,7 @@
 /*
 Plugin Name: Paid Memberships Pro - Lock Membership Level
 Plugin URI: http://www.paidmembershipspro.com/wp/lock-membership-level/
-Description: Lock membership level changes for specific users.
+Description: Lock membership level changes for specific users or by level.
 Version: .1
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
@@ -298,37 +298,6 @@ function pmprolml_extra_column_lockedmember($user) {
 }
 
 /*
-	Function to add links to the plugin action links
-*/
-function pmprolml_add_action_links($links) {	
-	$cap = apply_filters('pmpro_add_member_cap', 'edit_users');	
-	if(current_user_can($cap))
-	{
-		$new_links = array(
-			'<a href="' . get_admin_url(NULL, 'admin.php?page=pmpro-lockedmemberslist') . '">' . __('View Locked Members', 'pmprolml') . '</a>',
-		);
-	}
-	return array_merge($new_links, $links);
-}
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pmprolml_add_action_links');
-
-/*
-	Function to add links to the plugin row meta
-*/
-function pmprolml_plugin_row_meta($links, $file) {
-	if(strpos($file, 'pmpro-lock-membership-level.php') !== false)
-	{
-		$new_links = array(
-			'<a href="' . esc_url('http://www.paidmembershipspro.com/add-ons/plus-add-ons/pmpro-lock-membership-level/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
-			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
-		);
-		$links = array_merge($links, $new_links);
-	}
-	return $links;
-}
-add_filter('plugin_row_meta', 'pmprolml_plugin_row_meta', 10, 2);
-
-/*
 	Add settings to the edit levels page
 */
 //show the checkbox on the edit level page
@@ -474,3 +443,34 @@ function pmprolml_get_user_metadata( $null, $object_id, $meta_key, $single ) {
 	return $null;		
 }
 add_action('get_user_metadata', 'pmprolml_get_user_metadata', 10, 4);
+
+/*
+	Function to add links to the plugin action links
+*/
+function pmprolml_add_action_links($links) {	
+	$cap = apply_filters('pmpro_add_member_cap', 'edit_users');	
+	if(current_user_can($cap))
+	{
+		$new_links = array(
+			'<a href="' . get_admin_url(NULL, 'admin.php?page=pmpro-memberslist&l=locked') . '">' . __('View Locked Members', 'pmprolml') . '</a>',
+		);
+	}
+	return array_merge($new_links, $links);
+}
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pmprolml_add_action_links');
+
+/*
+	Function to add links to the plugin row meta
+*/
+function pmprolml_plugin_row_meta($links, $file) {
+	if(strpos($file, 'pmpro-lock-membership-level.php') !== false)
+	{
+		$new_links = array(
+			'<a href="' . esc_url('http://www.paidmembershipspro.com/add-ons/plus-add-ons/pmpro-lock-membership-level/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
+		);
+		$links = array_merge($links, $new_links);
+	}
+	return $links;
+}
+add_filter('plugin_row_meta', 'pmprolml_plugin_row_meta', 10, 2);

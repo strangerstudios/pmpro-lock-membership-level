@@ -5,11 +5,13 @@ Requires at least: 4.0
 Tested up to: 4.6.1
 Stable tag: .1
 
-Lock membership level changes for specific users.
+Lock membership level changes for specific users or by level.
 
 == Description ==
 
-This add on allows you to specify members that cannot make changes to their membership level. This may be useful for problem members that repeatedly purchase and cancel membership. Additionally, you can use this plugin to lock members who cannot cancel membership until a required number of installment payments are made. 
+This add on allows you to lock a specific user from making changes to their membership level (including selecting a new level if they currently do not have a level). This may be useful for problem members that repeatedly purchase and cancel membership.
+
+Additionally, you can use this add on to lock a membership level for a specific term.  This is useful if you want to restrict members from canceling membership until a required number of installment payments are made.
 
 == Installation ==
 
@@ -25,6 +27,15 @@ This add on allows you to specify members that cannot make changes to their memb
 1. To view a list of all locked members, navigate to Memberships > Locked Members in the WordPress admin.
 
 Note that a locked member will still "expire" if there is an expiration date set on their membership account. The member will change to "no level" or a downgrade level you have specified via custom code upon expiration.
+
+== How to Lock a Membership Level for a Specific Term ==
+1. Edit the membership level on the Memberships > Membership Levels > Edit Membership Level page.
+1. Under "Lock Membership Level Settings", check the box to lock the membership level.
+1. The level can be set to unlock "Never" or after a specified time period (X days, weeks, months, or years).
+
+== How to View Locked Members ==
+1. Navigate to the Memberships > Members List page in the WordPress admin.
+1. Select "Locked" from the "Show" dropdown.
 
 == Frequently Asked Questions ==
 
