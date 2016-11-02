@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, restrict, lock, block, admin
 Requires at least: 4.0
 Tested up to: 4.6.1
-Stable tag: .1
+Stable tag: .1.1
 
 Lock membership level changes for specific users or by level.
 
@@ -48,6 +48,9 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at http://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+
+= .1.1 =
+* BUG: Switched get_usermeta and update_usermeta calls to get_user_meta and update_user_meta.
 
 = .1 =
 * Initial version.

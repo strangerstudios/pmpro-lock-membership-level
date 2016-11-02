@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Lock Membership Level
 Plugin URI: http://www.paidmembershipspro.com/wp/lock-membership-level/
 Description: Lock membership level changes for specific users or by level.
-Version: .1
+Version: .1.1
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -27,8 +27,8 @@ function pmprolml_getUserOptions($user_id = NULL) {
 	if(empty($user_id))
 		return false;
 	
-	return array('locked'=>get_usermeta($user_id, 'pmprolml', true),
-				 'expiration'=>get_usermeta($user_id, 'pmprolml', true));
+	return array('locked'=>get_user_meta($user_id, 'pmprolml', true),
+				 'expiration'=>get_user_meta($user_id, 'pmprolml', true));
 }
 
 
@@ -146,8 +146,8 @@ function pmprolml_save_extra_profile_fields( $user_id ) {
 	else
 		$lml_expiration = '';
  
-	update_usermeta( $user_id, 'pmprolml', $_POST['pmprolml'] );
-	update_usermeta( $user_id, 'pmprolml_expiration', $lml_expiration);
+	update_user_meta( $user_id, 'pmprolml', $_POST['pmprolml'] );
+	update_user_meta( $user_id, 'pmprolml_expiration', $lml_expiration);
 }
 add_action( 'personal_options_update', 'pmprolml_save_extra_profile_fields' );
 add_action( 'edit_user_profile_update', 'pmprolml_save_extra_profile_fields' );
