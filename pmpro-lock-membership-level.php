@@ -12,7 +12,7 @@ Author URI: http://www.strangerstudios.com
 	Get lock options for a membership level
 */
 function pmprolml_getLevelOptions($level_id) {
-	return get_option('pmprolml_level_' . intval($level_id) . '_settings', array('lock'=>0, 'expiration'=>''));
+	return get_option('pmprolml_level_' . intval($level_id) . '_settings', array('lock'=>0, 'expiration'=>'', 'expiration_number'=>'', 'expiration_period'=>''));
 }
 
 /*
@@ -320,8 +320,8 @@ function pmprolml_pmpro_membership_level_after_other_settings()
 		<th scope="row" valign="top"><label for="lml_expiration"><?php _e('Unlock When?', 'pmpropbc');?></label></th>
 		<td>
 			<select id="lml_expiration" name="lml_expiration">
-				<option value="" <?php checked($options['lml_expiration'], '');?>><?php _e('Never', 'pmprolml');?></option>
-				<option value="period" <?php checked($options['lml_expiration'], 'period');?>><?php _e('Time Period', 'pmprolml');?></option>
+				<option value="" <?php if ( $options['expiration'] == '' ) echo " selected='selected'"; ?>><?php _e('Never', 'pmprolml');?></option>
+				<option value="period" <?php if ( $options['expiration'] == 'period' ) echo " selected='selected'";?>><?php _e('Time Period', 'pmprolml');?></option>
 			</select>
 			<input id="lml_expiration_number" name="lml_expiration_number" type="text" size="10" value="<?php echo esc_attr($options['expiration_number']);?>" />
 			<select id="lml_expiration_period" name="lml_expiration_period">
@@ -329,7 +329,7 @@ function pmprolml_pmpro_membership_level_after_other_settings()
 				$cycles = array( __('Day(s)', 'pmpro') => 'Day', __('Week(s)', 'pmpro') => 'Week', __('Month(s)', 'pmpro') => 'Month', __('Year(s)', 'pmpro') => 'Year' );
 				foreach ( $cycles as $name => $value ) {
 				  echo "<option value='$value'";
-				  if ( $options['lml_expiration_period'] == $value ) echo " selected='selected'";
+				  if ( $options['expiration_period'] == $value ) echo " selected='selected'";
 				  echo ">$name</option>";
 				}
 			  ?>
@@ -370,14 +370,14 @@ function pmprolml_pmpro_save_membership_level($level_id)
 {
 	//get values
 	if(isset($_REQUEST['lml_lock']))
-		$lml_lock = intval($_REQUEST['pbc_setting']);
+		$lml_lock = 1;
 	else
 		$lml_lock = 0;
 	
 	if(!empty($lml_lock) && isset($_REQUEST['lml_expiration'])) {
-		$lml_expiration = intval($_REQUEST['lml_expiration']);
+		$lml_expiration = $_REQUEST['lml_expiration'];
 		$lml_expiration_number = intval($_REQUEST['lml_expiration_number']);
-		$lml_expiration_period = intval($_REQUEST['lml_expiration_period']);
+		$lml_expiration_period = $_REQUEST['lml_expiration_period'];
 	} else {
 		$lml_expiration = '';
 		$lml_expiration_number = '';
@@ -395,6 +395,7 @@ function pmprolml_pmpro_save_membership_level($level_id)
 	//save
 	delete_option('pmprolml_level_' . $level_id . '_settings');
 	add_option('pmprolml_level_' . $level_id . '_settings', $options, "", "no");
+	update_option('pmprolml_level_' .$level_id. '_settings', $options, "no");
 }
 add_action("pmpro_save_membership_level", "pmprolml_pmpro_save_membership_level");
 
