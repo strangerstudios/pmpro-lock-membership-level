@@ -324,8 +324,8 @@ function pmprolml_pmpro_membership_level_after_other_settings()
 		<th scope="row" valign="top"><label for="lml_expiration"><?php _e('Unlock When?', 'pmprolml');?></label></th>
 		<td>
 			<select id="lml_expiration" name="lml_expiration">
-				<option value="" <?php checked($options['lml_expiration'], '');?>><?php _e('Never', 'pmprolml');?></option>
-				<option value="period" <?php checked($options['lml_expiration'], 'period');?>><?php _e('Time Period', 'pmprolml');?></option>
+				<option value="" <?php selected($options['lml_expiration'], '');?>><?php _e('Never', 'pmprolml');?></option>
+				<option value="period" <?php selected($options['lml_expiration'], 'period');?>><?php _e('Time Period', 'pmprolml');?></option>
 			</select>
 			<input id="lml_expiration_number" name="lml_expiration_number" type="text" size="10" value="<?php echo esc_attr($options['expiration_number']);?>" />
 			<select id="lml_expiration_period" name="lml_expiration_period">
