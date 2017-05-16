@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Lock Membership Level
 Plugin URI: http://www.paidmembershipspro.com/wp/lock-membership-level/
 Description: Lock membership level changes for specific users or by level.
-Version: .1.1
+Version: .2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -12,7 +12,7 @@ Author URI: http://www.strangerstudios.com
 	Get lock options for a membership level
 */
 function pmprolml_getLevelOptions($level_id) {
-	return get_option('pmprolml_level_' . intval($level_id) . '_settings', array('lock'=>0, 'expiration'=>''));
+	return get_option('pmprolml_level_' . intval($level_id) . '_settings', array('lock' => 0, 'expiration' => null,'expiration_number' => null, 'expiration_period' => null ) );
 }
 
 /*
@@ -28,7 +28,7 @@ function pmprolml_getUserOptions($user_id = NULL) {
 		return false;
 	
 	return array('locked'=>get_user_meta($user_id, 'pmprolml', true),
-				 'expiration'=>get_user_meta($user_id, 'pmprolml', true));
+				 'expiration'=>get_user_meta($user_id, 'pmprolml_expiration', true));
 }
 
 
@@ -83,7 +83,7 @@ function pmprolml_show_extra_profile_fields($user) {
 			</td>
 		</tr>
 		<tr class="lml_expiration">
-			<th scope="row" valign="top"><label for="lml_expiration"><?php _e('Unlock When?', 'pmpropbc');?></label></th>
+			<th scope="row" valign="top"><label for="lml_expiration"><?php _e('Unlock When?', 'pmprolml');?></label></th>
 			<td>
 				<select id="lml_expiration" name="lml_expiration">
 					<option value="" <?php selected($lml_expiration, '');?>><?php _e('Never', 'pmprolml');?></option>
@@ -164,12 +164,14 @@ function pmprolml_template_redirect() {
 	$user_lock_options = pmprolml_getUserOptions($current_user->ID);
 		
 	//Redirect away from the membership locked page if user isn't locked.
-	if(is_page($pmpro_pages['membership_locked']) && (empty($user_lock_options) || empty($user_lock_options['locked']))) {
-		if(pmpro_hasMembershipLevel())
+	if( is_user_logged_in() && is_page($pmpro_pages['membership_locked']) && (empty($user_lock_options) || empty($user_lock_options['locked']))) {
+		if(pmpro_hasMembershipLevel()) {
 			wp_redirect(pmpro_url('account'));
-		else
+			exit;
+		} else {
 			wp_redirect(home_url());
-		exit;
+			exit;
+		}
 	}
 
 	//Redirect to the membership locked page if user is locked.
@@ -177,13 +179,15 @@ function pmprolml_template_redirect() {
 			$pmpro_pages['levels'],
 			$pmpro_pages['cancel'],
 			$pmpro_pages['checkout']);
-	if(is_page($locked_pages)) {
+	if(is_user_logged_in() && is_page($locked_pages)) {
 		if(!empty($user_lock_options) && !empty($user_lock_options['locked'])) {
-			if(!empty($pmpro_pages['membership_locked']))
+			if(!empty($pmpro_pages['membership_locked'])) {
 				wp_redirect(pmpro_url('membership_locked'));
-			else
+				exit;
+			} else {
 				wp_redirect(home_url());
-			exit;
+				exit;
+			}
 		}
 	}
 }
@@ -224,9 +228,9 @@ function pmprolml_pmpro_memberslist_extra_cols_body($theuser) {
 <td>
 	<?php 
 		if(!empty($theuser->pmprolml))
-			echo 'Yes';
+			echo __( 'Yes', 'pmprolml' );
 		else
-			echo 'No';
+			echo __( 'No', 'pmprolml' );
 	?>
 </td>
 <?php
@@ -306,18 +310,18 @@ function pmprolml_pmpro_membership_level_after_other_settings()
 	$level_id = intval($_REQUEST['edit']);
 	$options = pmprolml_getLevelOptions($level_id);
 ?>
-<h3 class="topborder"><?php _e('Lock Membership Level Settings', 'pmpropbc');?></h3>
-<p><?php _e('Use these settings to keep members from cancelling or changing levels after getting this level.', 'pmpropbc');?></p>
+<h3 class="topborder"><?php _e('Lock Membership Level Settings', 'pmprolml');?></h3>
+<p><?php _e('Use these settings to keep members from cancelling or changing levels after getting this level.', 'pmprolml');?></p>
 <table>
 <tbody class="form-table">
 	<tr>
-		<th scope="row" valign="top"><label for="lml_lock"><?php _e('Lock This Level?', 'pmpropbc');?></label></th>
+		<th scope="row" valign="top"><label for="lml_lock"><?php _e('Lock This Level?', 'pmprolml');?></label></th>
 		<td>
 			<input type="checkbox" id="lml_lock" name="lml_lock" <?php checked($options['lock'], 1);?>><label for="lml_lock"><?php _e('Check to lock users from cancelling or changing levels after they get this level.', 'pmprolml');?></label>
 		</td>
 	</tr>
 	<tr class="lml_expiration">
-		<th scope="row" valign="top"><label for="lml_expiration"><?php _e('Unlock When?', 'pmpropbc');?></label></th>
+		<th scope="row" valign="top"><label for="lml_expiration"><?php _e('Unlock When?', 'pmprolml');?></label></th>
 		<td>
 			<select id="lml_expiration" name="lml_expiration">
 				<option value="" <?php checked($options['lml_expiration'], '');?>><?php _e('Never', 'pmprolml');?></option>
@@ -369,10 +373,7 @@ add_action('pmpro_membership_level_after_other_settings', 'pmprolml_pmpro_member
 function pmprolml_pmpro_save_membership_level($level_id)
 {
 	//get values
-	if(isset($_REQUEST['lml_lock']))
-		$lml_lock = intval($_REQUEST['pbc_setting']);
-	else
-		$lml_lock = 0;
+	$lml_lock = isset( $_REQUEST['lml_lock'] ) ? true : false;
 	
 	if(!empty($lml_lock) && isset($_REQUEST['lml_expiration'])) {
 		$lml_expiration = intval($_REQUEST['lml_expiration']);
