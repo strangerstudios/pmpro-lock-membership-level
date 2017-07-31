@@ -49,6 +49,17 @@ add_action('pmpro_extra_page_settings', 'pmprolml_extra_page_settings');
 	Add "Lock Membership" field in the profile
 */
 function pmprolml_show_extra_profile_fields($user) {
+
+	wp_get_current_user();
+	
+	if(!empty($_REQUEST['user_id'])) 
+		$user_ID = $_REQUEST['user_id'];
+
+	$membership_level_capability = apply_filters("pmpro_edit_member_capability", "manage_options");
+
+	if(!current_user_can($membership_level_capability))
+		return false;
+	
 	//is there an end date?
 	$lml_expiration = get_user_meta($user->ID, 'pmprolml_expiration', true);
 		
