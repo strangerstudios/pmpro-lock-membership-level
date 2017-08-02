@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Paid Memberships Pro - Lock Membership Level
-Plugin URI: http://www.paidmembershipspro.com/wp/lock-membership-level/
+Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level/
 Description: Lock membership level changes for specific users or by level.
 Version: .2
 Author: Stranger Studios
-Author URI: http://www.strangerstudios.com
+Author URI: https://www.paidmembershipspro.com
 */
 
 /*
