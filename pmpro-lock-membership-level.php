@@ -53,7 +53,7 @@ function pmprolml_show_extra_profile_fields($user) {
 	wp_get_current_user();
 	
 	if(!empty($_REQUEST['user_id'])) 
-		$user_ID = $_REQUEST['user_id'];
+		$user_ID = intval($_REQUEST['user_id']);
 
 	$membership_level_capability = apply_filters("pmpro_edit_member_capability", "manage_options");
 
@@ -387,9 +387,15 @@ function pmprolml_pmpro_save_membership_level($level_id)
 	$lml_lock = isset( $_REQUEST['lml_lock'] ) ? true : false;
 	
 	if(!empty($lml_lock) && isset($_REQUEST['lml_expiration'])) {
-		$lml_expiration = $_REQUEST['lml_expiration'];
+		$lml_expiration = sanitize_text_field($_REQUEST['lml_expiration']);
+		if(!in_array($lml_expiration, array('period')))
+			$lml_expiration = '';
+		
 		$lml_expiration_number = intval($_REQUEST['lml_expiration_number']);
-		$lml_expiration_period = $_REQUEST['lml_expiration_period'];
+		
+		$lml_expiration_period = sanitize_text_field($_REQUEST['lml_expiration_period']);
+		if(!in_array($lml_expiration_period, array('Day', 'Week', 'Month', 'Year')))
+			$lml_expiration_period = '';
 	} else {
 		$lml_expiration = '';
 		$lml_expiration_number = '';

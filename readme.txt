@@ -53,6 +53,7 @@ Please visit our premium support site at http://www.paidmembershipspro.com for m
 * BUG FIX: Partially complete default values for level settings
 * BUG FIX: Locked members were able to unlock their profile through the Edit Profile page.
 * BUG FIX: Fixed other bugs with the settings on the edit membership level page. (Thanks, Ted Barnett)
+* SECURITY: Added sanitization of settings on the edit level and edit user/profile pages.
 
 = .1.1 =
 * BUG: Switched get_usermeta and update_usermeta calls to get_user_meta and update_user_meta.
