@@ -169,7 +169,7 @@ add_action( 'edit_user_profile_update', 'pmprolml_save_extra_profile_fields' );
 function pmprolml_template_redirect() {
 	global $pmpro_pages, $current_user;
 	
-	if(empty($pmpro_pages))
+	if( empty( $pmpro_pages ) || empty( $pmpro_pages['membership_locked'] ) )
 		return;
 
 	$user_lock_options = pmprolml_getUserOptions($current_user->ID);
