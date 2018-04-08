@@ -2,7 +2,7 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, restrict, lock, block, admin
 Requires at least: 4.0
-Tested up to: 4.8
+Tested up to: 4.9.5
 Stable tag: .2
 
 Lock membership level changes for specific users or by level.
@@ -45,7 +45,7 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 
 = I need help installing, configuring, or customizing the plugin. =
 
-Please visit our premium support site at http://www.paidmembershipspro.com for more documentation and our support forums.
+Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
 = .2 =
