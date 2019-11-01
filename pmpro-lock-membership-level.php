@@ -175,7 +175,7 @@ function pmprolml_template_redirect() {
 	$user_lock_options = pmprolml_getUserOptions($current_user->ID);
 		
 	//Redirect away from the membership locked page if user isn't locked.
-	if( is_user_logged_in() && is_page($pmpro_pages['membership_locked']) && (empty($user_lock_options) || empty($user_lock_options['locked']))) {
+	if( is_user_logged_in() && ! is_page($pmpro_pages['account']) && is_page($pmpro_pages['membership_locked']) && (empty($user_lock_options) || empty($user_lock_options['locked']))) {
 		if(pmpro_hasMembershipLevel()) {
 			wp_redirect(pmpro_url('account'));
 			exit;
