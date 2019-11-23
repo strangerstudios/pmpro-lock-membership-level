@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Lock Membership Level
 Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level/
 Description: Lock membership level changes for specific users or by level.
-Version: .2
+Version: .3
 Author: Paid Memberships Pro
 Author URI: https://www.paidmembershipspro.com
 */

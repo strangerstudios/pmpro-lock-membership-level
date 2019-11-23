@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, restrict, lock, block, admin
 Requires at least: 4.0
-Tested up to: 4.9.5
-Stable tag: .2
+Tested up to: 5.3
+Stable tag: .3
 
 Lock membership level changes for specific users or by level.
 
@@ -48,6 +48,9 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= .3 - 2019-11-22 =
+* BUG FIX: Fixed issue where dates could save incorrectly with WP 5.3+.
+
 = .2 =
 * BUG FIX: Incorrect text domain for translation
 * BUG FIX: Partially complete default values for level settings
