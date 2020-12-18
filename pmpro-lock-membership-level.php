@@ -169,13 +169,13 @@ add_action( 'edit_user_profile_update', 'pmprolml_save_extra_profile_fields' );
 function pmprolml_template_redirect() {
 	global $pmpro_pages, $current_user;
 	
-	if( empty( $pmpro_pages ) || empty( $pmpro_pages['membership_locked'] ) )
+	if( empty( $pmpro_pages ) )
 		return;
 
 	$user_lock_options = pmprolml_getUserOptions($current_user->ID);
-		
+  
 	//Redirect away from the membership locked page if user isn't locked.
-	if( is_user_logged_in() && is_page($pmpro_pages['membership_locked']) && (empty($user_lock_options) || empty($user_lock_options['locked']))) {
+	if( is_user_logged_in() && ! empty( $pmpro_pages['membership_locked'] ) && is_page($pmpro_pages['membership_locked']) && (empty($user_lock_options) || empty($user_lock_options['locked']))) {
 		if(pmpro_hasMembershipLevel()) {
 			wp_redirect(pmpro_url('account'));
 			exit;
@@ -192,11 +192,14 @@ function pmprolml_template_redirect() {
 			$pmpro_pages['checkout']);
 	if(is_user_logged_in() && is_page($locked_pages)) {
 		if(!empty($user_lock_options) && !empty($user_lock_options['locked'])) {
-			if(!empty($pmpro_pages['membership_locked'])) {
-				wp_redirect(pmpro_url('membership_locked'));
+			if( ! empty( $pmpro_pages['membership_locked'] ) ) {
+				wp_redirect( pmpro_url( 'membership_locked' ) );
+				exit;
+			} elseif( ! empty( $pmpro_pages['account'] ) ) {
+				wp_redirect( add_query_arg( 'pmprolml_redirect', '1', pmpro_url( 'account' ) ) );
 				exit;
 			} else {
-				wp_redirect(home_url());
+				wp_redirect( home_url() );
 				exit;
 			}
 		}
@@ -462,6 +465,45 @@ function pmprolml_get_user_metadata( $null, $object_id, $meta_key, $single ) {
 	return $null;		
 }
 add_action('get_user_metadata', 'pmprolml_get_user_metadata', 10, 4);
+
+function pmprolml_show_account_page_error( $content ) {
+	global $pmpro_pages;
+
+	// Check that we are on the PMPro Account page.
+	if ( empty( $pmpro_pages ) || ! is_page( $pmpro_pages['account'] ) ) {
+		return $content;
+	}
+
+	if ( isset( $_REQUEST['pmprolml_redirect'] ) ) {
+		// User has locked membership and was redirected here.
+		global $pmpro_msg, $pmpro_msgt;
+		$pmpro_msg = __( 'Your membership level is locked.', 'pmpro-lock-membership-level' );
+		$pmpro_msgt = 'pmpro_error';
+		pmpro_showMessage();
+	}
+		
+	return $content;
+}
+add_filter( 'the_content', 'pmprolml_show_account_page_error' );
+
+function pmprolml_hide_account_page_action_links( $links ) {
+	global $current_user;
+	$user_lock_options = pmprolml_getUserOptions($current_user->ID);
+	if ( ! empty( $user_lock_options ) && ! empty( $user_lock_options['locked'] ) ) {
+		unset( $links['cancel'] );
+		unset( $links['change'] );
+		unset( $links['renew'] );
+		?>
+		<style>
+			#pmpro_actionlink-levels {
+				display: none;
+			}
+		</style>
+		<?php
+	}
+	return $links;
+}
+add_filter( 'pmpro_member_action_links', 'pmprolml_hide_account_page_action_links' );
 
 /*
 	Function to add links to the plugin action links
