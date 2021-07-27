@@ -6,7 +6,18 @@ Description: Lock membership level changes for specific users or by level.
 Version: .3
 Author: Paid Memberships Pro
 Author URI: https://www.paidmembershipspro.com
+Text Domain: pmpro-lock-membership-level
+Domain Path: /languages
 */
+
+/*
+	Load plugin textdomain.
+*/
+function pmprolml_load_textdomain() {
+    load_plugin_textdomain( 'pmpro-lock-membership-level', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
+  }
+  add_action( 'init', 'pmprolml_load_textdomain' );
+ 
 
 /*
 	Get lock options for a membership level
@@ -40,7 +51,7 @@ function pmprolml_getUserOptions($user_id = NULL) {
 	"Lock Membership Level Changes".
 */
 function pmprolml_extra_page_settings($pages) {
-   $pages['membership_locked'] = array('title'=>__('Membership Locked', 'pmprolml'), 'content'=>'[pmpro_membership_locked]', 'hint'=>__('Include the shortcode [pmpro_membership_locked].', 'pmprolml'));
+   $pages['membership_locked'] = array('title'=>__('Membership Locked', 'pmpro-lock-membership-level'), 'content'=>'[pmpro_membership_locked]', 'hint'=>__('Include the shortcode [pmpro_membership_locked].', 'pmpro-lock-membership-level'));
    return $pages;
 }
 add_action('pmpro_extra_page_settings', 'pmprolml_extra_page_settings');
@@ -85,20 +96,20 @@ function pmprolml_show_extra_profile_fields($user) {
 	<h3><?php _e('Lock Membership', 'pmpro');?></h3>
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php _e('Lock Membership Level', 'pmpro');?></th>			
+			<th scope="row"><?php esc_html_e('Lock Membership Level', 'pmpro-lock-membership-level');?></th>			
 			<td>
 				<label for="pmprolml">
 					<input id="pmprolml" name="pmprolml" type="checkbox" value="1"<?php checked( get_user_meta($user->ID, 'pmprolml', true)); ?> />
-					<?php _e('Lock membership level changes for this user.', 'pmprolml'); ?>
+					<?php esc_html_e('Lock membership level changes for this user.', 'pmpro-lock-membership-level'); ?>
 				</label>
 			</td>
 		</tr>
 		<tr class="lml_expiration">
-			<th scope="row" valign="top"><label for="lml_expiration"><?php _e('Unlock When?', 'pmprolml');?></label></th>
+			<th scope="row" valign="top"><label for="lml_expiration"><?php esc_html_e('Unlock When?', 'pmpro-lock-membership-level');?></label></th>
 			<td>
 				<select id="lml_expiration" name="lml_expiration">
-					<option value="" <?php selected($lml_expiration, '');?>><?php _e('Never', 'pmprolml');?></option>
-					<option value="date" <?php selected(!empty($lml_expiration), true);?>><?php _e('Specific Date', 'pmprolml');?></option>
+					<option value="" <?php selected($lml_expiration, '');?>><?php esc_html_e('Never', 'pmpro-lock-membership-level');?></option>
+					<option value="date" <?php selected(!empty($lml_expiration), true);?>><?php esc_html_e('Specific Date', 'pmpro-lock-membership-level');?></option>
 				</select>
 				<span id="lml_expiration_date" <?php if(!$lml_expiration) { ?>style="display: none;"<?php } ?>>
 					on
@@ -213,7 +224,7 @@ function pmpro_shortcode_membership_locked($atts, $content=null, $code="") {
 	// examples: [pmpro_membership_locked message="You cannot do this."]
 	
 	extract(shortcode_atts(array(
-		'message' => __('An administrator has locked changes to your membership account.', 'pmprolml'),
+		'message' => __('An administrator has locked changes to your membership account.', 'pmpro-lock-membership-level'),
 	), $atts));
 	
 	$r = '<div class="pmpro_message pmpro_error">' . $message . '</div>';
@@ -239,9 +250,9 @@ function pmprolml_pmpro_memberslist_extra_cols_body($theuser) {
 <td>
 	<?php 
 		if(!empty($theuser->pmprolml))
-			echo __( 'Yes', 'pmprolml' );
+			echo __( 'Yes', 'pmpro-lock-membership-level' );
 		else
-			echo __( 'No', 'pmprolml' );
+			echo __( 'No', 'pmpro-lock-membership-level' );
 	?>
 </td>
 <?php
@@ -321,22 +332,22 @@ function pmprolml_pmpro_membership_level_after_other_settings()
 	$level_id = intval($_REQUEST['edit']);
 	$options = pmprolml_getLevelOptions($level_id);
 ?>
-<h3 class="topborder"><?php _e('Lock Membership Level Settings', 'pmprolml');?></h3>
-<p><?php _e('Use these settings to keep members from cancelling or changing levels after getting this level.', 'pmprolml');?></p>
+<h3 class="topborder"><?php _e('Lock Membership Level Settings', 'pmpro-lock-membership-level');?></h3>
+<p><?php esc_html_e('Use these settings to keep members from cancelling or changing levels after getting this level.', 'pmpro-lock-membership-level');?></p>
 <table>
 <tbody class="form-table">
 	<tr>
-		<th scope="row" valign="top"><label for="lml_lock"><?php _e('Lock This Level?', 'pmprolml');?></label></th>
+		<th scope="row" valign="top"><label for="lml_lock"><?php esc_html_e('Lock This Level?', 'pmpro-lock-membership-level');?></label></th>
 		<td>
-			<input type="checkbox" id="lml_lock" name="lml_lock" <?php checked($options['lock'], 1);?>><label for="lml_lock"><?php _e('Check to lock users from cancelling or changing levels after they get this level.', 'pmprolml');?></label>
+			<input type="checkbox" id="lml_lock" name="lml_lock" <?php checked($options['lock'], 1);?>><label for="lml_lock"><?php esc_html_e('Check to lock users from cancelling or changing levels after they get this level.', 'pmpro-lock-membership-level');?></label>
 		</td>
 	</tr>
 	<tr class="lml_expiration">
-		<th scope="row" valign="top"><label for="lml_expiration"><?php _e('Unlock When?', 'pmprolml');?></label></th>
+		<th scope="row" valign="top"><label for="lml_expiration"><?php esc_html_e('Unlock When?', 'pmpro-lock-membership-level');?></label></th>
 		<td>
 			<select id="lml_expiration" name="lml_expiration">
-				<option value="" <?php selected($options['expiration'], '');?>><?php _e('Never', 'pmprolml');?></option>
-				<option value="period" <?php selected($options['expiration'], 'period');?>><?php _e('Time Period', 'pmprolml');?></option>				
+				<option value="" <?php selected($options['expiration'], '');?>><?php esc_html_e('Never', 'pmpro-lock-membership-level');?></option>
+				<option value="period" <?php selected($options['expiration'], 'period');?>><?php esc_html_e('Time Period', 'pmpro-lock-membership-level');?></option>				
 			</select>
 			<input id="lml_expiration_number" name="lml_expiration_number" type="text" size="10" value="<?php echo esc_attr($options['expiration_number']);?>" />
 			<select id="lml_expiration_period" name="lml_expiration_period">
@@ -471,7 +482,7 @@ function pmprolml_add_action_links($links) {
 	if(current_user_can($cap))
 	{
 		$new_links = array(
-			'<a href="' . get_admin_url(NULL, 'admin.php?page=pmpro-memberslist&l=locked') . '">' . __('View Locked Members', 'pmprolml') . '</a>',
+			'<a href="' . get_admin_url(NULL, 'admin.php?page=pmpro-memberslist&l=locked') . '">' . esc_html__('View Locked Members', 'pmpro-lock-membership-level') . '</a>',
 		);
 	}
 	return array_merge($new_links, $links);
