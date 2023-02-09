@@ -478,6 +478,16 @@ function pmprolml_add_action_links($links) {
 }
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pmprolml_add_action_links');
 
+/**
+ * Mark the plugin as MMPU-incompatible.
+ */
+function pmprolml_mmpu_incompatible_add_ons( $incompatible ) {
+    $incompatible[] = 'PMPro Lock Membership Level Add On';
+    return $incompatible;
+}
+add_filter( 'pmpro_mmpu_incompatible_add_ons', 'pmprolml_mmpu_incompatible_add_ons' );
+
+
 /*
 	Function to add links to the plugin row meta
 */
