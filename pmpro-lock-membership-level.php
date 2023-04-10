@@ -468,13 +468,13 @@ add_action('get_user_metadata', 'pmprolml_get_user_metadata', 10, 4);
 */
 function pmprolml_add_action_links($links) {	
 	$cap = apply_filters('pmpro_add_member_cap', 'edit_users');	
-	if(current_user_can($cap))
-	{
+	if( current_user_can( $cap ) ) {
 		$new_links = array(
 			'<a href="' . get_admin_url(NULL, 'admin.php?page=pmpro-memberslist&l=locked') . '">' . __('View Locked Members', 'pmprolml') . '</a>',
 		);
+		return array_merge($new_links, $links);
 	}
-	return array_merge($new_links, $links);
+	return $links;
 }
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pmprolml_add_action_links');
 
