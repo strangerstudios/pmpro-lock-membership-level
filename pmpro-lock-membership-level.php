@@ -10,6 +10,16 @@ Text Domain: pmpro-lock-membership-level
 Domain Path: /languages
 */
 
+/**
+ * pmprolml_load_plugin_text_domain
+ *
+ * @since TBD
+ */
+function pmprolml_load_plugin_text_domain() {
+	load_plugin_textdomain( 'pmpro-lock-membership-level', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
+}
+add_action( 'init', 'pmprolml_load_plugin_text_domain' );
+
 /*
 	Load plugin textdomain.
 */
@@ -51,7 +61,7 @@ function pmprolml_getUserOptions($user_id = NULL) {
 	"Lock Membership Level Changes".
 */
 function pmprolml_extra_page_settings($pages) {
-   $pages['membership_locked'] = array('title'=>__('Membership Locked', 'pmpro-lock-membership-level'), 'content'=>'[pmpro_membership_locked]', 'hint'=>__('Include the shortcode [pmpro_membership_locked].', 'pmpro-lock-membership-level'));
+   $pages['membership_locked'] = array('title'=> esc_html__('Membership Locked', 'pmpro-lock-membership-level'), 'content'=>'[pmpro_membership_locked]', 'hint'=> sprintf( esc_html__('Include the shortcode %s.', 'pmpro-lock-membership-level'), '[pmpro_membership_locked]' ) );
    return $pages;
 }
 add_action('pmpro_extra_page_settings', 'pmprolml_extra_page_settings');
@@ -93,7 +103,7 @@ function pmprolml_show_extra_profile_fields($user) {
 	else
 		$selected_expires_year = (int)$current_year + 1;
 	?>
-	<h3><?php _e('Lock Membership', 'pmpro');?></h3>
+	<h3><?php _e('Lock Membership', 'pmpro-lock-membership-level');?></h3>
 	<table class="form-table">
 		<tr>
 			<th scope="row"><?php esc_html_e('Lock Membership Level', 'pmpro-lock-membership-level');?></th>			
@@ -168,7 +178,7 @@ function pmprolml_save_extra_profile_fields( $user_id ) {
 	else
 		$lml_expiration = '';
  
-	update_user_meta( $user_id, 'pmprolml', $_POST['pmprolml'] );
+	update_user_meta( $user_id, 'pmprolml', sanitize_text_field( $_POST['pmprolml'] ) );
 	update_user_meta( $user_id, 'pmprolml_expiration', $lml_expiration);
 }
 add_action( 'personal_options_update', 'pmprolml_save_extra_profile_fields' );
@@ -227,12 +237,12 @@ function pmpro_shortcode_membership_locked($atts, $content=null, $code="") {
 	// examples: [pmpro_membership_locked message="You cannot do this."]
 	
 	extract(shortcode_atts(array(
-		'message' => __('An administrator has locked changes to your membership account.', 'pmpro-lock-membership-level'),
+		'message' => esc_html__('An administrator has locked changes to your membership account.', 'pmpro-lock-membership-level'),
 	), $atts));
 	
 	$r = '<div class="pmpro_message pmpro_error">' . $message . '</div>';
 	if($current_user->membership_level->ID)
-		$r .= '<p><a href="' . pmpro_url("account") . '">' . __("&larr; Return to Your Account", "pmpro") . '</a></p>';
+		$r .= '<p><a href="' . pmpro_url("account") . '"> &larr; ' . esc_html__("Return to Your Account", "pmpro-lock-membership-level") . '</a></p>';
 
 	return $r;
 }
@@ -243,7 +253,7 @@ add_shortcode("pmpro_membership_locked", "pmpro_shortcode_membership_locked");
 */
 function pmprolml_pmpro_memberslist_extra_cols_header() {
 ?>
-<th><?php _e('Locked?', 'pmpro');?></th>
+<th><?php esc_html_e('Locked?', 'pmpro-lock-membership-level');?></th>
 <?php
 }
 add_action("pmpro_memberslist_extra_cols_header", "pmprolml_pmpro_memberslist_extra_cols_header");
@@ -253,9 +263,9 @@ function pmprolml_pmpro_memberslist_extra_cols_body($theuser) {
 <td>
 	<?php 
 		if(!empty($theuser->pmprolml))
-			echo __( 'Yes', 'pmpro-lock-membership-level' );
+			esc_html_e( 'Yes', 'pmpro-lock-membership-level' );
 		else
-			echo __( 'No', 'pmpro-lock-membership-level' );
+			esc_html_e( 'No', 'pmpro-lock-membership-level' );
 	?>
 </td>
 <?php
@@ -274,7 +284,7 @@ function pmprolml_admin_footer_js() {
 		?>
 		<script>
 			jQuery(document).ready(function() {
-				jQuery('select[name=l]').append('<option value="locked" <?php echo $checked;?>>Locked</option>');
+				jQuery('select[name=l]').append('<option value="locked" <?php echo $checked;?>><?php esc_html__( 'Locked', 'pmpro-lock-membership-level' ); ?></option>');
 			});
 		</script>
 		<?php
@@ -335,7 +345,7 @@ function pmprolml_pmpro_membership_level_after_other_settings()
 	$level_id = intval($_REQUEST['edit']);
 	$options = pmprolml_getLevelOptions($level_id);
 ?>
-<h3 class="topborder"><?php _e('Lock Membership Level Settings', 'pmpro-lock-membership-level');?></h3>
+<h3 class="topborder"><?php esc_html_e('Lock Membership Level Settings', 'pmpro-lock-membership-level');?></h3>
 <p><?php esc_html_e('Use these settings to keep members from cancelling or changing levels after getting this level.', 'pmpro-lock-membership-level');?></p>
 <table>
 <tbody class="form-table">
@@ -355,7 +365,11 @@ function pmprolml_pmpro_membership_level_after_other_settings()
 			<input id="lml_expiration_number" name="lml_expiration_number" type="text" size="10" value="<?php echo esc_attr($options['expiration_number']);?>" />
 			<select id="lml_expiration_period" name="lml_expiration_period">
 			  <?php
-				$cycles = array( __('Day(s)', 'pmpro') => 'Day', __('Week(s)', 'pmpro') => 'Week', __('Month(s)', 'pmpro') => 'Month', __('Year(s)', 'pmpro') => 'Year' );
+				$cycles = array( 
+					esc_html__('Day(s)', 'pmpro-lock-membership-level') => 'Day', 
+					esc_html__('Week(s)', 'pmpro-lock-membership-level') => 'Week', 
+					esc_html__('Month(s)', 'pmpro-lock-membership-level') => 'Month', 
+					esc_html__('Year(s)', 'pmpro-lock-membership-level') => 'Year' );
 				foreach ( $cycles as $name => $value ) {
 				  echo "<option value='$value'";
 				  if ( $options['expiration_period'] == $value ) echo " selected='selected'";
@@ -539,8 +553,8 @@ function pmprolml_plugin_row_meta($links, $file) {
 	if(strpos($file, 'pmpro-lock-membership-level.php') !== false)
 	{
 		$new_links = array(
-			'<a href="' . esc_url('https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
-			'<a href="' . esc_url('https://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url('https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-lock-membership-level' ) ) . '">' . esc_html__( 'Docs', 'pmpro-lock-membership-level' ) . '</a>',
+			'<a href="' . esc_url('https://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-lock-membership-level' ) ) . '">' . esc_html__( 'Support', 'pmpro-lock-membership-level' ) . '</a>',
 		);
 		$links = array_merge($links, $new_links);
 	}
