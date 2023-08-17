@@ -503,7 +503,7 @@ function pmprolml_show_account_page_error( $content ) {
 	if ( isset( $_REQUEST['pmprolml_redirect'] ) ) {
 		// User has locked membership and was redirected here.
 		global $pmpro_msg, $pmpro_msgt;
-		$pmpro_msg = __( 'Your membership level is locked.', 'pmpro-lock-membership-level' );
+		$pmpro_msg = esc_html__( 'Your membership level is locked.', 'pmpro-lock-membership-level' );
 		$pmpro_msgt = 'pmpro_error';
 		pmpro_showMessage();
 	}
