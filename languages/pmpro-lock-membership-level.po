@@ -1,0 +1,149 @@
+# Copyright (C) 2023 Paid Memberships Pro
+# This file is distributed under the same license as the Paid Memberships Pro - Lock Membership Level plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Paid Memberships Pro - Lock Membership Level 0.4\n"
+"Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
+"Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
+"Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2023-08-17T15:14:18+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.8.1\n"
+"X-Domain: pmpro-lock-membership-level\n"
+
+#. Plugin Name of the plugin
+msgid "Paid Memberships Pro - Lock Membership Level"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level/"
+msgstr ""
+
+#. Description of the plugin
+msgid "Lock membership level changes for specific users or by level."
+msgstr ""
+
+#. Author of the plugin
+msgid "Paid Memberships Pro"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://www.paidmembershipspro.com"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:55
+msgid "Membership Locked"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:55
+msgid "Include the shortcode %s."
+msgstr ""
+
+#: pmpro-lock-membership-level.php:97
+msgid "Lock Membership"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:100
+msgid "Lock Membership Level"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:104
+msgid "Lock membership level changes for this user."
+msgstr ""
+
+#: pmpro-lock-membership-level.php:109
+#: pmpro-lock-membership-level.php:350
+msgid "Unlock When?"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:112
+#: pmpro-lock-membership-level.php:353
+msgid "Never"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:113
+msgid "Specific Date"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:231
+msgid "An administrator has locked changes to your membership account."
+msgstr ""
+
+#: pmpro-lock-membership-level.php:236
+msgid "Return to Your Account"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:247
+msgid "Locked?"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:257
+msgid "Yes"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:259
+msgid "No"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:278
+msgid "Locked"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:339
+msgid "Lock Membership Level Settings"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:340
+msgid "Use these settings to keep members from cancelling or changing levels after getting this level."
+msgstr ""
+
+#: pmpro-lock-membership-level.php:344
+msgid "Lock This Level?"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:346
+msgid "Check to lock users from cancelling or changing levels after they get this level."
+msgstr ""
+
+#: pmpro-lock-membership-level.php:354
+msgid "Time Period"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:360
+msgid "Day(s)"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:361
+msgid "Week(s)"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:362
+msgid "Month(s)"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:363
+msgid "Year(s)"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:529
+msgid "View Locked Members"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:544
+msgid "View Documentation"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:544
+msgid "Docs"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:545
+msgid "Visit Customer Support Forum"
+msgstr ""
+
+#: pmpro-lock-membership-level.php:545
+msgid "Support"
+msgstr ""
