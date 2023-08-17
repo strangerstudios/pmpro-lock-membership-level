@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, restrict, lock, block, admin
 Requires at least: 4.0
 Tested up to: 6.2
-Stable tag: .3
+Stable tag: 0.4
 
 Lock membership level changes for specific users or by level.
 
@@ -48,6 +48,14 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 0.4 - 2023-08-17 =
+* ENHANCEMENT: Now hiding member action links on the Membership Account page for locked members. #15 (@dparker1005)
+* ENHANCEMENT: If the lock page is not set, locked users will instead be redirected to the Membership Account page and an error message will be shown. #15 (@dparker1005)
+* ENHANCEMENT: Updating `<h3>` tags to `<h2>` tags for better accessibility. #25 (@michaelbeil)
+* BUG FIX/ENHANCEMENT: Updated localization and escaping of strings. #17, #19 (@JarrydLong, @femiyb)
+* BUG FIX/ENHANCEMENT: Marking plugin as incompatible with Multiple Memberships Per User for the PMPro v3.0 update. #21 (@dparker1005)
+* BUG FIX: Fixed a PHP warning on the plugins page when the user does not have specified capabilities. #22 (@JarrydLong)
+
 = .3 - 2019-11-22 =
 * BUG FIX: Fixed issue where dates could save incorrectly with WP 5.3+.
 

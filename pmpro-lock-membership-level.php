@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Lock Membership Level
 Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level/
 Description: Lock membership level changes for specific users or by level.
-Version: .3
+Version: 0.4
 Author: Paid Memberships Pro
 Author URI: https://www.paidmembershipspro.com
 Text Domain: pmpro-lock-membership-level
@@ -13,21 +13,12 @@ Domain Path: /languages
 /**
  * pmprolml_load_plugin_text_domain
  *
- * @since TBD
+ * @since 0.4
  */
 function pmprolml_load_plugin_text_domain() {
 	load_plugin_textdomain( 'pmpro-lock-membership-level', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
 }
 add_action( 'init', 'pmprolml_load_plugin_text_domain' );
-
-/*
-	Load plugin textdomain.
-*/
-function pmprolml_load_textdomain() {
-    load_plugin_textdomain( 'pmpro-lock-membership-level', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
-  }
-  add_action( 'init', 'pmprolml_load_textdomain' );
- 
 
 /*
 	Get lock options for a membership level
