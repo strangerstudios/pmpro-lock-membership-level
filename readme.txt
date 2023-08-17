@@ -2,7 +2,7 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, restrict, lock, block, admin
 Requires at least: 4.0
-Tested up to: 5.3
+Tested up to: 6.2
 Stable tag: .3
 
 Lock membership level changes for specific users or by level.
