@@ -103,7 +103,7 @@ function pmprolml_show_extra_profile_fields($user) {
 	else
 		$selected_expires_year = (int)$current_year + 1;
 	?>
-	<h3><?php _e('Lock Membership', 'pmpro-lock-membership-level');?></h3>
+	<h2><?php esc_html_e('Lock Membership', 'pmpro-lock-membership-level');?></h2>
 	<table class="form-table">
 		<tr>
 			<th scope="row"><?php esc_html_e('Lock Membership Level', 'pmpro-lock-membership-level');?></th>			
@@ -345,7 +345,7 @@ function pmprolml_pmpro_membership_level_after_other_settings()
 	$level_id = intval($_REQUEST['edit']);
 	$options = pmprolml_getLevelOptions($level_id);
 ?>
-<h3 class="topborder"><?php esc_html_e('Lock Membership Level Settings', 'pmpro-lock-membership-level');?></h3>
+<h2 class="topborder"><?php esc_html_e('Lock Membership Level Settings', 'pmpro-lock-membership-level');?></h2>
 <p><?php esc_html_e('Use these settings to keep members from cancelling or changing levels after getting this level.', 'pmpro-lock-membership-level');?></p>
 <table>
 <tbody class="form-table">
