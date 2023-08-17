@@ -470,7 +470,8 @@ function pmprolml_show_account_page_error( $content ) {
 	global $pmpro_pages;
 
 	// Check that we are on the PMPro Account page.
-	if ( empty( $pmpro_pages ) || ! is_page( $pmpro_pages['account'] ) ) {
+	if ( empty( $pmpro_pages ) || empty( $pmpro_pages['account'] ) || ! is_page( $pmpro_pages['account'] ) ) {
+
 		return $content;
 	}
 
