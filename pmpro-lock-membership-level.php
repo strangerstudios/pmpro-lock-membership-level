@@ -157,7 +157,13 @@ function pmprolml_save_extra_profile_fields( $user_id ) {
 	else
 		$lml_expiration = '';
  
-	update_user_meta( $user_id, 'pmprolml', $_POST['pmprolml'] );
+	if( ! empty( $_REQUEST['pmprolml'] ) ) {
+		$lml_set = sanitize_text_field( $_POST['pmprolml'] );
+	} else {
+		$lml_set = '';
+	}
+
+	update_user_meta( $user_id, 'pmprolml', $lml_set );
 	update_user_meta( $user_id, 'pmprolml_expiration', $lml_expiration);
 }
 add_action( 'personal_options_update', 'pmprolml_save_extra_profile_fields' );
