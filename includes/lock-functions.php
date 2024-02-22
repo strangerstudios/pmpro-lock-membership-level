@@ -199,7 +199,7 @@ function pmprolml_after_all_membership_level_changes( $pmpro_old_user_levels ) {
 		foreach ( $added_levels as $level_id ) {
 			$options = pmprolml_getLevelOptions( $level_id );
 			if ( ! empty( $options ) && $options['lock'] == 1 ) {
-				if ( ! empty( $options['expiration_number'] ) ) {
+				if ( ! empty( $options['expiration'] ) && ! empty( $options['expiration_number'] ) ) {
 					$expiration = strtotime( '+' . $options['expiration_number'] . ' ' . $options['expiration_period'] );
 				} else {
 					$expiration = 0;
