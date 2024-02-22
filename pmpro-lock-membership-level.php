@@ -34,7 +34,7 @@ function pmprolml_plugin_row_meta($links, $file) {
 	{
 		$new_links = array(
 			'<a href="' . esc_url('https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-lock-membership-level' ) ) . '">' . esc_html__( 'Docs', 'pmpro-lock-membership-level' ) . '</a>',
-			'<a href="' . esc_url('https://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-lock-membership-level' ) ) . '">' . esc_html__( 'Support', 'pmpro-lock-membership-level' ) . '</a>',
+			'<a href="' . esc_url('https://www.paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-lock-membership-level' ) ) . '">' . esc_html__( 'Support', 'pmpro-lock-membership-level' ) . '</a>',
 		);
 		$links = array_merge($links, $new_links);
 	}
