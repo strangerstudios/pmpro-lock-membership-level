@@ -17,17 +17,6 @@ require_once( plugin_dir_path( __FILE__ ) . 'includes/memberslist.php' );    // 
 require_once( plugin_dir_path( __FILE__ ) . 'includes/deprecated.php' );     // Include legacy functions for PMPro v2.x.
 
 /**
- * Get lock options for a membership level
- *
- * @param int $level_id The level ID to get lock options for.
- * @return array The lock options for the level.
- * @since TBD
- */
-function pmprolml_getLevelOptions($level_id) {
-	return get_option('pmprolml_level_' . intval($level_id) . '_settings', array('lock' => 0, 'expiration' => null,'expiration_number' => null, 'expiration_period' => null ) );
-}
-
-/**
  * pmprolml_load_plugin_text_domain
  *
  * @since 0.4
