@@ -21,7 +21,6 @@ add_action('pmpro_extra_page_settings', 'pmprolml_extra_page_settings');
  *
  * @param int $level_id The level ID to get lock options for.
  * @return array The lock options for the level.
- * @since TBD
  */
 function pmprolml_getLevelOptions($level_id) {
 	return get_option('pmprolml_level_' . intval($level_id) . '_settings', array('lock' => 0, 'expiration' => null,'expiration_number' => null, 'expiration_period' => null ) );
