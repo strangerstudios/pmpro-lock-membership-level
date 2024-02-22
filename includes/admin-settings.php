@@ -59,6 +59,7 @@ function pmprolml_membership_level_before_content_settings( $level ) {
 								<option value="" <?php selected($options['expiration'], '');?>><?php esc_html_e('Never', 'pmpro-lock-membership-level');?></option>
 								<option value="period" <?php selected($options['expiration'], 'period');?>><?php esc_html_e('Time Period', 'pmpro-lock-membership-level');?></option>				
 							</select>
+							<br /><br />
 							<input id="lml_expiration_number" name="lml_expiration_number" type="text" size="10" value="<?php echo esc_attr($options['expiration_number']);?>" />
 							<select id="lml_expiration_period" name="lml_expiration_period">
 							<?php
