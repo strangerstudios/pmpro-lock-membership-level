@@ -120,11 +120,11 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 										<option value="0"><?php esc_html_e( 'Never', 'pmpro-lock-membership-level' ); ?></option>
 										<option value="1"><?php esc_html_e( 'Specific Date', 'pmpro-lock-membership-level' ); ?></option>
 									</select>
-									<input type="datetime-local" name="pmprolml_expiration_date" style="display: none;" value="<?php echo esc_attr( date( 'Y-m-d H:i', strtotime( '+1 year' ) ) ); ?>"/>
+									<input type="datetime-local" name="pmprolml_expiration_date" style="display: none;" value="<?php echo esc_attr( date( 'Y-m-d H:i', strtotime( '+1 year', current_time( 'timestamp' ) ) ) ); ?>"/>
 								</span>
 							</div>
 							<div class="pmpro-level_change-action-footer">
-								<input type="submit" name="pmprolml_add_lock" value="<?php esc_html_e( 'Add Lock', 'pmpro-lock-membership-level' ); ?>" class="button button-primary">
+								<input type="submit" name="pmprolml_add_lock" value="<?php esc_html_e( 'Add/Update Lock', 'pmpro-lock-membership-level' ); ?>" class="button button-primary">
 								<input type="button" name="cancel-add-lock" value="<?php esc_attr_e( 'Close', 'pmpro-lock-membership-level' ); ?>" class="button button-secondary">
 							</div>
 						</div> <!-- end pmpro-level_change-actions -->
@@ -134,7 +134,7 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 			<tfoot>
 				<tr>
 					<td colspan="3">
-						<a class="button-secondary pmpro-has-icon pmpro-has-icon-plus pmpro-add-membership-lock" href="#" ><?php esc_html_e( 'Add Lock', 'pmpro-lock-membership-level' ); ?></a>
+						<a class="button-secondary pmpro-has-icon pmpro-has-icon-plus pmpro-add-membership-lock" href="#" ><?php esc_html_e( 'Add/Update Lock', 'pmpro-lock-membership-level' ); ?></a>
 					</td>
 				</tr>
 			</tfoot>
