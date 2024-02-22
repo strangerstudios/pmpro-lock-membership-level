@@ -190,6 +190,11 @@ function pmprolml_after_all_membership_level_changes( $pmpro_old_user_levels ) {
 		// Get all levels that were removed.
 		$removed_levels = array_diff( $old_levels, $current_levels );
 
+		// Remove locks for all removed levels.
+		foreach ( $removed_levels as $level_id ) {
+			pmprolml_delete_lock_for_user( $user_id, $level_id );
+		}
+
 		// Add locks for all added levels.
 		foreach ( $added_levels as $level_id ) {
 			$options = pmprolml_getLevelOptions( $level_id );
@@ -204,10 +209,6 @@ function pmprolml_after_all_membership_level_changes( $pmpro_old_user_levels ) {
 			}
 		}
 
-		// Remove locks for all removed levels.
-		foreach ( $removed_levels as $level_id ) {
-			pmprolml_delete_lock_for_user( $user_id, $level_id );
-		}
 	}
 }
 add_action( 'pmpro_after_all_membership_level_changes', 'pmprolml_after_all_membership_level_changes' );
