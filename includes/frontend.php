@@ -61,7 +61,7 @@ function pmprolml_template_redirect() {
 			$levels_to_check = array();
 			$user_levels     = pmpro_getMembershipLevelsForUser( $current_user->ID );
 			$user_level_ids  = array_map( 'intval', wp_list_pluck( $user_levels, 'ID' ) );
-			if ( function_exists( 'pmpro_get_group_id_for_level' ) ) {
+			if ( class_exists( 'PMPro_Member_Edit_Panel' ) ) {
 				// For 3.0+, check if the user is going to lose any levels in the same group as the level being purchased.
 				$checkout_level = pmpro_getLevelAtCheckout();
 				$group_id = pmpro_get_group_id_for_level( $checkout_level->id );
@@ -91,8 +91,8 @@ function pmprolml_template_redirect() {
 					}
 				}
 			} else {
-				// For 2.x, just check if the user is going to lose any levels.
-				$levels_to_check = $user_level_ids;
+				// For 2.x, just check if the user has all levels locked.
+				$levels_to_check = array( 0 );
 			}
 
 			// Check if any of the levels are locked.
