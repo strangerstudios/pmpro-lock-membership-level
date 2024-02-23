@@ -24,7 +24,7 @@ function pmprolml_get_locks_for_user( $user_id ) {
 		// Add the lock to the new method.
 		if ( ! empty( $expiration ) ) {
 			// Add the lock to the new method with expiration.
-			pmprolml_add_lock_for_user( $user_id, 0, strtotime( $expiration ) );
+			pmprolml_add_lock_for_user( $user_id, 0, strtotime( get_gmt_from_date( $expiration ) ) );
 		} else {
 			// Add the lock to the new method without expiration.
 			pmprolml_add_lock_for_user( $user_id, 0, 0 );
