@@ -56,43 +56,44 @@ function pmprolml_template_redirect() {
 	}
 	if ( pmpro_is_checkout() ) { // Using pmpro_is_checkout() instead of is_page( $pmpro_pages['checkout'] ) in case there are multiple checkout pages on the site.
 		if ( pmprolml_is_level_locked_for_user( $current_user->ID, 0 ) ) {
+			// This covers "all" locks, which includes all of 2.x sites.
 			$locked_level = 0;
-		} else {
-			$levels_to_check = array();
+		} elseif ( class_exists( 'PMPro_Member_Edit_Panel' ) ) {
+			// For 3.0+, check if the user is going to lose any levels in the same group as the level being purchased.
+			// Get the user's levels.
 			$user_levels     = pmpro_getMembershipLevelsForUser( $current_user->ID );
 			$user_level_ids  = array_map( 'intval', wp_list_pluck( $user_levels, 'ID' ) );
-			if ( class_exists( 'PMPro_Member_Edit_Panel' ) ) {
-				// For 3.0+, check if the user is going to lose any levels in the same group as the level being purchased.
-				$checkout_level = pmpro_getLevelAtCheckout();
-				$group_id = pmpro_get_group_id_for_level( $checkout_level->id );
-				$group    = pmpro_get_level_group( $group_id );
-				if ( ! empty( $group ) && empty( $group->allow_multiple_selections ) ) {
-					// Loop through the levels and see if any are in the same group as the level being purchased.
-					if ( ! empty( $user_levels ) ) {
-						foreach ( $user_levels as $level ) {
-							// If this is the level that the user is purchasing, continue.
-							if ( $level->id == (int)$checkout_level->id ) {
-								continue;
-							}
 
-							// If this level is not in the same group, continue.
-							if ( pmpro_get_group_id_for_level( $level->id ) != $group_id ) {
-								continue;
-							}
+			// Get the checkout level.
+			$checkout_level = pmpro_getLevelAtCheckout();
+			$group_id = pmpro_get_group_id_for_level( $checkout_level->id );
+			$group    = pmpro_get_level_group( $group_id );
 
-							// If we made it this far, the user is going to lose this level after checkout.
-							$levels_to_check[] = (int)$level->id;
+			// Find all the user levels that will be lost.
+			$levels_to_check = array();
+			if ( ! empty( $group ) && empty( $group->allow_multiple_selections ) ) {
+				// Loop through the levels and see if any are in the same group as the level being purchased.
+				if ( ! empty( $user_levels ) ) {
+					foreach ( $user_levels as $level ) {
+						// If this is the level that the user is purchasing, continue.
+						if ( $level->id == (int)$checkout_level->id ) {
+							continue;
 						}
-					}
-				} else {
-					// Just check that we are not purchsing a level the user already has.
-					if ( in_array( (int)$checkout_level->id, $user_level_ids ) ) {
-						$levels_to_check[] = (int)$checkout_level->id;
+
+						// If this level is not in the same group, continue.
+						if ( pmpro_get_group_id_for_level( $level->id ) != $group_id ) {
+							continue;
+						}
+
+						// If we made it this far, the user is going to lose this level after checkout.
+						$levels_to_check[] = (int)$level->id;
 					}
 				}
 			} else {
-				// For 2.x, just check if the user has all levels locked.
-				$levels_to_check = array( 0 );
+				// Just check that we are not purchsing a level the user already has.
+				if ( in_array( (int)$checkout_level->id, $user_level_ids ) ) {
+					$levels_to_check[] = (int)$checkout_level->id;
+				}
 			}
 
 			// Check if any of the levels are locked.
