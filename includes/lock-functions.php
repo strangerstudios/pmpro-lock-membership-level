@@ -3,7 +3,7 @@
 /**
  * Get all locks for a user.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param int $user_id The user ID to get locks for.
  * @return array An array of locks for the user.
@@ -63,7 +63,7 @@ function pmprolml_get_locks_for_user( $user_id ) {
 /**
  * Check if a specific level is locked for a user.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param int $user_id The user ID to check.
  * @param int $level_id The level ID to check.
@@ -95,7 +95,7 @@ function pmprolml_is_level_locked_for_user( $user_id, $level_id ) {
 /**
  * Add a lock for a user.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param int $user_id The user ID to add the lock for.
  * @param int $level_id The level ID to lock or 0 to lock all levels.
@@ -136,7 +136,7 @@ function pmprolml_add_lock_for_user( $user_id, $level_id, $expiration ) {
 /**
  * Delete a lock for a user.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param int $user_id The user ID to delete the lock for.
  * @param int $level_id The level ID to delete the lock for.
@@ -167,7 +167,7 @@ function pmprolml_delete_lock_for_user( $user_id, $level_id ) {
 /**
  * When users change levels, add/remove locks as needed.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param array $pmpro_old_user_levels An array of old user levels ($user_id => $old_levels[]).
  */

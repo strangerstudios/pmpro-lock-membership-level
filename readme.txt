@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, restrict, lock, block, admin
 Requires at least: 4.0
-Tested up to: 6.2
-Stable tag: 0.4
+Tested up to: 6.4
+Stable tag: 1.0
 
 Lock membership level changes for specific users or by level.
 
@@ -21,9 +21,9 @@ Additionally, you can use this add on to lock a membership level for a specific 
 1. Add the shortcode [pmpro_membership_locked] to that page. The shortcode's only attribute "message" can be used to customize the default message shown.
 
 == How to Lock a Member ==
-1. Locate the member in the WordPress Users dashboard.
-1. Edit the user profile.
-1. Under "Lock Membership" check the box to restrict the member from changing their membership level.
+1. Locate the member in the PMPro Members List.
+1. Edit the member.
+1. Under "Lock Membership", click the button to add a lock to restrict the member from changing their membership level.
 1. To view a list of all locked members, navigate to Memberships > Locked Members in the WordPress admin.
 
 Note that a locked member will still "expire" if there is an expiration date set on their membership account. The member will change to "no level" or a downgrade level you have specified via custom code upon expiration.
@@ -48,6 +48,13 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 1.0 - 2024-02-23 =
+* FEATURE: When using PMPro v3.0+, now allows locking specific levels for MMPU compatibility. #28 (@dparker1005)
+* FEATURE: When using PMPro v3.0+, added a "Locked Membership" panel to the Edit Users page allowing admins to view, add, and update a user's locks. #28 (@kimcoleman, @dparker1005)
+* ENHANCEMENT: Updated how locks are saved in the database to allow for multiple locks per user. Locks from pre-1.0 setups will be migrated as "all level" locks. #28 (@dparker1005)
+* BUG FIX/ENHANCEMENT: Improved logic to detect when the checkout page or cancellation page should be locked. #28 (@dparker1005)
+* REFACTOR: Removed functions that were no longer needed. #28 (@dparker1005)
+
 = 0.4 - 2023-08-17 =
 * ENHANCEMENT: Now hiding member action links on the Membership Account page for locked members. #15 (@dparker1005)
 * ENHANCEMENT: If the lock page is not set, locked users will instead be redirected to the Membership Account page and an error message will be shown. #15 (@dparker1005)
