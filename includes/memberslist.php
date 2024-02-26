@@ -137,7 +137,7 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pmprolml_add_act
  */
 function pmprolml_member_edit_panels( $panels ) {
 	// If the class doesn't exist and the abstract class does, require the class.
-	if ( ! class_exists( 'PMProup_Member_Edit_Panel' ) && class_exists( 'PMPro_Member_Edit_Panel' ) ) {
+	if ( ! class_exists( 'PMProlml_Member_Edit_Panel' ) && class_exists( 'PMPro_Member_Edit_Panel' ) ) {
 		require_once( dirname( __FILE__ ) . '/../classes/pmprolml-class-member-edit-panel.php' );
 	}
 
