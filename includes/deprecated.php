@@ -28,7 +28,7 @@ function pmprolml_show_extra_profile_fields($user) {
 		}
 	}
 
-	$lml_expiration = empty( $all_lock ) ? '' : date_i18n( 'Y-m-d 12:00:00', $all_lock['expiration'] );
+	$lml_expiration = ( empty( $all_lock ) || empty( $all_lock['expiration'] ) ) ? '' : date_i18n( 'Y-m-d 12:00:00', $all_lock['expiration'] );
 		
 	//some vars for the dates
 	$current_day = date("j", current_time('timestamp'));			
@@ -127,7 +127,7 @@ function pmprolml_save_extra_profile_fields( $user_id ) {
 
 	if ( empty( sanitize_text_field( $_POST['pmprolml'] ) ) ) {
 		// Delete the "all" lock for the user.
-		pmprolml_delete_lock( $user_id, 0 );
+		pmprolml_delete_lock_for_user( $user_id, 0 );
 	} else {
 		// Update the "all" lock for the user.
 		$expiration = empty( $_POST['lml_expiration'] ) ? 0 : strtotime( $_POST['lml_expiration_year'] . '-' . $_POST['lml_expiration_month'] . '-' . $_POST['lml_expiration_day'] . ' 12:00:00' );
