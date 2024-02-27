@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, restrict, lock, block, admin
 Requires at least: 4.0
 Tested up to: 6.4
-Stable tag: 1.0
+Stable tag: 1.0.1
 
 Lock membership level changes for specific users or by level.
 
@@ -48,6 +48,11 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 1.0.1 - 2024-02-27 =
+* BUG FIX: Fixed PHP error when trying to delete a lock for a user when using PMPro v2.x. #30 (@dparker1005)
+* BUG FIX: Fixed issue where the lock expiration would show as "Jan 1, 1970" instead of "Never" while editing a user when using PMPro v2.x. #30 (@dparker1005)
+* BUG FIX: Fixed conflict with the PMPro Unlock Protocol Add On where this plugin's Edit Member panel may not show. #30 (@dparker1005, @kimcoleman)
+
 = 1.0 - 2024-02-23 =
 * FEATURE: When using PMPro v3.0+, now allows locking specific levels for MMPU compatibility. #28 (@dparker1005)
 * FEATURE: When using PMPro v3.0+, added a "Locked Membership" panel to the Edit Users page allowing admins to view, add, and update a user's locks. #28 (@kimcoleman, @dparker1005)
