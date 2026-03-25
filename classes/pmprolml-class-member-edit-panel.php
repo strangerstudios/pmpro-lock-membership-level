@@ -95,7 +95,7 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 							</div>
 							<div class="pmpro-level_change-action">
 								<span class="pmpro-level_change-action-label">
-									<?php esc_html_e( 'Membership Level', 'pmpro-lock-membership-level' ); ?>
+									<label for="pmprolml_level_id"><?php esc_html_e( 'Membership Level', 'pmpro-lock-membership-level' ); ?></label>
 								</span>
 								<span class="pmpro-level_change-action-field">
 									<select id="pmprolml_level_id" name="pmprolml_level_id">
@@ -109,6 +109,7 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 										}
 										?>
 									</select>
+									<p class="description"><?php esc_html_e( 'Select "All Levels" to prevent any membership changes for this user, or select a specific level to lock only that membership.', 'pmpro-lock-membership-level' ); ?></p>
 								</span>
 							</div>
 							<div class="pmpro-level_change-action">
