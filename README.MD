@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/license-GPL--3.0%2B-red.svg?style=flat-square)
 
 ### Welcome to the Paid Memberships Pro - Lock Membership Level GitHub Repository
-Add a description of the product here.
+Lock membership level changes for specific users or by level.
 
 For more information please visit [https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level](https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level)
 
