@@ -54,6 +54,12 @@ function pmprolml_membership_level_before_content_settings( $level ) {
 			</button>
 		</div>
 		<div class="pmpro_section_inside" <?php echo $section_visibility === 'hidden' ? 'style="display: none"' : ''; ?>>
+			<p>
+				<?php
+				$lock_membership_link = '<a title="' . esc_attr__( 'Lock Membership Level Add On Documentation', 'pmpro-lock-membership-level' ) . '" target="_blank" rel="nofollow noopener" href="https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level/?utm_source=plugin&utm_medium=pmpro-lock-membership-level&utm_campaign=add-ons">' . esc_html__( 'Lock Membership Level Add On', 'pmpro-lock-membership-level' ) . '</a>';
+				printf( esc_html__( 'Learn more about the %s.', 'pmpro-lock-membership-level' ), $lock_membership_link ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				?>
+			</p>
 			<table>
 				<tbody class="form-table">
 					<tr>
