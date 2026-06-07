@@ -1,17 +1,17 @@
-# Copyright (C) 2024 Paid Memberships Pro
+# Copyright (C) 2026 Paid Memberships Pro
 # This file is distributed under the same license as the Paid Memberships Pro - Lock Membership Level plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Lock Membership Level 1.0.1\n"
+"Project-Id-Version: Paid Memberships Pro - Lock Membership Level 1.0.2\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-02-27T12:55:31+00:00\n"
+"POT-Creation-Date: 2026-05-01T17:54:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.10.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-lock-membership-level\n"
 
 #. Plugin Name of the plugin
@@ -48,7 +48,7 @@ msgid "Level"
 msgstr ""
 
 #: classes/pmprolml-class-member-edit-panel.php:40
-#: classes/pmprolml-class-member-edit-panel.php:116
+#: classes/pmprolml-class-member-edit-panel.php:117
 msgid "Lock Expiration"
 msgstr ""
 
@@ -69,8 +69,8 @@ msgid "Membership Ended"
 msgstr ""
 
 #: classes/pmprolml-class-member-edit-panel.php:79
-#: classes/pmprolml-class-member-edit-panel.php:120
-#: includes/admin-settings.php:69
+#: classes/pmprolml-class-member-edit-panel.php:121
+#: includes/admin-settings.php:75
 #: includes/deprecated.php:66
 msgid "Never"
 msgstr ""
@@ -95,17 +95,21 @@ msgstr ""
 msgid "All Levels"
 msgstr ""
 
-#: classes/pmprolml-class-member-edit-panel.php:121
+#: classes/pmprolml-class-member-edit-panel.php:112
+msgid "Select \"All Levels\" to prevent any membership changes for this user, or select a specific level to lock only that membership."
+msgstr ""
+
+#: classes/pmprolml-class-member-edit-panel.php:122
 #: includes/deprecated.php:67
 msgid "Specific Date"
 msgstr ""
 
-#: classes/pmprolml-class-member-edit-panel.php:127
-#: classes/pmprolml-class-member-edit-panel.php:137
+#: classes/pmprolml-class-member-edit-panel.php:128
+#: classes/pmprolml-class-member-edit-panel.php:138
 msgid "Add/Update Lock"
 msgstr ""
 
-#: classes/pmprolml-class-member-edit-panel.php:128
+#: classes/pmprolml-class-member-edit-panel.php:129
 msgid "Close"
 msgstr ""
 
@@ -114,6 +118,7 @@ msgid "Membership Locked"
 msgstr ""
 
 #: includes/admin-settings.php:14
+#, php-format
 msgid "Include the shortcode %s."
 msgstr ""
 
@@ -121,36 +126,49 @@ msgstr ""
 msgid "Lock Membership Level Settings"
 msgstr ""
 
-#: includes/admin-settings.php:60
-msgid "Lock This Level?"
+#: includes/admin-settings.php:59
+msgid "Lock Membership Level Add On Documentation"
 msgstr ""
 
-#: includes/admin-settings.php:62
-msgid "Check to lock users from cancelling or changing levels after they get this level."
+#: includes/admin-settings.php:59
+msgid "Lock Membership Level Add On"
+msgstr ""
+
+#: includes/admin-settings.php:60
+#, php-format
+msgid "Learn more about the %s."
 msgstr ""
 
 #: includes/admin-settings.php:66
+msgid "Lock This Level?"
+msgstr ""
+
+#: includes/admin-settings.php:68
+msgid "Check to lock users from cancelling or changing levels after they get this level."
+msgstr ""
+
+#: includes/admin-settings.php:72
 #: includes/deprecated.php:63
 msgid "Unlock When?"
 msgstr ""
 
-#: includes/admin-settings.php:70
+#: includes/admin-settings.php:76
 msgid "Time Period"
 msgstr ""
 
-#: includes/admin-settings.php:77
+#: includes/admin-settings.php:83
 msgid "Day(s)"
 msgstr ""
 
-#: includes/admin-settings.php:78
+#: includes/admin-settings.php:84
 msgid "Week(s)"
 msgstr ""
 
-#: includes/admin-settings.php:79
+#: includes/admin-settings.php:85
 msgid "Month(s)"
 msgstr ""
 
-#: includes/admin-settings.php:80
+#: includes/admin-settings.php:86
 msgid "Year(s)"
 msgstr ""
 
@@ -167,6 +185,7 @@ msgid "Lock membership level changes for this user."
 msgstr ""
 
 #: includes/frontend.php:178
+#, php-format
 msgid "Your %s membership level is locked. You are not allowed to change that membership level."
 msgstr ""
 
