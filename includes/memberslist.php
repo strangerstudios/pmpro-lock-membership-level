@@ -22,9 +22,14 @@ add_filter( 'pmpro_manage_memberslist_columns', 'pmprolml_manage_memberslist_col
 function pmprolml_manage_memberslist_custom_column( $colname, $user_id, $item = null ) {
 	if ( 'pmprolml' === $colname ) {
 		if ( ! empty( $item ) && ! empty( $item['membership_id'] ) ) {
-			echo pmprolml_is_level_locked_for_user( $user_id, $item['membership_id'] ) ? esc_html__( 'Yes', 'pmpro-lock-membership-level' ) : esc_html__( 'No', 'pmpro-lock-membership-level' );
+			$is_locked = pmprolml_is_level_locked_for_user( $user_id, $item['membership_id'] );
 		} else {
-			echo empty( pmprolml_get_locks_for_user( $user_id ) ) ? esc_html__( 'No', 'pmpro-lock-membership-level' ) : esc_html__( 'Yes', 'pmpro-lock-membership-level' );
+			$is_locked = ! empty( pmprolml_get_locks_for_user( $user_id ) );
+		}
+		if ( $is_locked ) {
+			echo '<span class="pmpro_tag pmpro_tag-has_icon pmpro_tag-alert">' . esc_html__( 'Locked', 'pmpro-lock-membership-level' ) . '</span>';
+		} else {
+			echo esc_html__( '&#8212;', 'pmpro-lock-membership-level' );
 		}
 	}
 }
