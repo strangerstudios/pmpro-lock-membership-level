@@ -131,6 +131,111 @@ function pmprolml_template_redirect() {
 add_action('template_redirect', 'pmprolml_template_redirect');
 
 /**
+ * Block cancellation of locked levels server-side.
+ *
+ * pmprolml_template_redirect() redirects away from the cancel page, but PMPro core
+ * processes cancellations on the 'wp' hook, which runs before template_redirect,
+ * so the redirect alone cannot stop a locked cancellation.
+ *
+ * @since TBD
+ *
+ * @param bool    $process Whether the cancellation should be processed.
+ * @param WP_User $user    The user cancelling.
+ * @return bool
+ */
+function pmprolml_cancel_should_process( $process, $user ) {
+	if ( ! $process || empty( $user->ID ) ) {
+		return $process;
+	}
+
+	// Figure out which levels are being cancelled (mirrors preheaders/cancel.php parsing).
+	$user_level_ids = array_map( 'intval', wp_list_pluck( pmpro_getMembershipLevelsForUser( $user->ID ), 'ID' ) );
+	if ( ! empty( $_REQUEST['levelstocancel'] ) && 'all' === $_REQUEST['levelstocancel'] ) {
+		$levels_to_check = $user_level_ids;
+	} elseif ( ! empty( $_REQUEST['levelstocancel'] ) ) {
+		$requested_ids   = array_map( 'intval', explode( '+', sanitize_text_field( $_REQUEST['levelstocancel'] ) ) );
+		$levels_to_check = array_intersect( $requested_ids, $user_level_ids );
+	} elseif ( ! empty( $_REQUEST['level'] ) ) {
+		// Legacy ?level param.
+		$levels_to_check = array_intersect( array( (int) $_REQUEST['level'] ), $user_level_ids );
+	} else {
+		// No levels requested means cancelling all levels.
+		$levels_to_check = $user_level_ids;
+	}
+
+	foreach ( $levels_to_check as $level_id ) {
+		if ( pmprolml_is_level_locked_for_user( $user->ID, $level_id ) ) {
+			global $pmpro_error;
+			$pmpro_error = __( 'This membership is locked and cannot be cancelled. Please contact the site administrator for assistance.', 'pmpro-lock-membership-level' );
+			return false;
+		}
+	}
+
+	return $process;
+}
+add_filter( 'pmpro_cancel_should_process', 'pmprolml_cancel_should_process', 10, 2 );
+
+/**
+ * Block checkouts that would cause the user to lose a locked level.
+ *
+ * Same hook-ordering issue as cancellations: core processes checkouts on the 'wp'
+ * hook, before the template_redirect guard can run.
+ *
+ * @since TBD
+ *
+ * @param bool $continue Whether the checkout should continue.
+ * @return bool
+ */
+function pmprolml_checkout_checks( $continue ) {
+	global $current_user;
+
+	if ( ! $continue || empty( $current_user->ID ) ) {
+		return $continue;
+	}
+
+	$locked_level = null;
+	if ( pmprolml_is_level_locked_for_user( $current_user->ID, 0 ) ) {
+		// The user has a lock on all levels.
+		$locked_level = 0;
+	} elseif ( class_exists( 'PMPro_Member_Edit_Panel' ) ) {
+		// PMPro 3.0+: check whether the user would lose a locked level in the same group as the level being purchased.
+		$user_levels    = pmpro_getMembershipLevelsForUser( $current_user->ID );
+		$user_level_ids = array_map( 'intval', wp_list_pluck( $user_levels, 'ID' ) );
+		$checkout_level = pmpro_getLevelAtCheckout();
+		if ( ! empty( $checkout_level ) ) {
+			$group_id        = pmpro_get_group_id_for_level( $checkout_level->id );
+			$group           = pmpro_get_level_group( $group_id );
+			$levels_to_check = array();
+			if ( ! empty( $group ) && empty( $group->allow_multiple_selections ) ) {
+				foreach ( $user_levels as $level ) {
+					if ( (int) $level->id === (int) $checkout_level->id || pmpro_get_group_id_for_level( $level->id ) != $group_id ) {
+						continue;
+					}
+					$levels_to_check[] = (int) $level->id;
+				}
+			} elseif ( in_array( (int) $checkout_level->id, $user_level_ids, true ) ) {
+				// Re-purchasing a level the user already has replaces it.
+				$levels_to_check[] = (int) $checkout_level->id;
+			}
+			foreach ( $levels_to_check as $level_id ) {
+				if ( pmprolml_is_level_locked_for_user( $current_user->ID, $level_id ) ) {
+					$locked_level = $level_id;
+					break;
+				}
+			}
+		}
+	}
+
+	if ( null !== $locked_level ) {
+		pmpro_setMessage( __( 'This membership is locked and cannot be changed. Please contact the site administrator for assistance.', 'pmpro-lock-membership-level' ), 'pmpro_error' );
+		return false;
+	}
+
+	return $continue;
+}
+add_filter( 'pmpro_checkout_checks', 'pmprolml_checkout_checks' );
+
+/**
  * Hide the "Cancel", "Change", and "Renew" links on the account page if the user's membership is locked.
  *
  * @param array $links   Array of action links.
