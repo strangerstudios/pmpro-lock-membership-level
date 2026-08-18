@@ -128,7 +128,7 @@ function pmprolml_save_extra_profile_fields( $user_id ) {
 	if ( ! current_user_can( $membership_level_capability ) )
 		return false;
 
-	if ( empty( sanitize_text_field( $_POST['pmprolml'] ) ) ) {
+	if ( empty( $_POST['pmprolml'] ) ) {
 		// Delete the "all" lock for the user.
 		pmprolml_delete_lock_for_user( $user_id, 0 );
 	} else {
