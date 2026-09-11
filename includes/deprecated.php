@@ -122,10 +122,13 @@ function pmprolml_save_extra_profile_fields( $user_id ) {
 		return;
 	}
 
-	if ( !current_user_can( 'edit_user', $user_id ) )
+	// Use the same capability as the field display. edit_user passes for users
+	// editing their own profile, which would let members remove their own lock.
+	$membership_level_capability = apply_filters( 'pmpro_edit_member_capability', 'manage_options' );
+	if ( ! current_user_can( $membership_level_capability ) )
 		return false;
 
-	if ( empty( sanitize_text_field( $_POST['pmprolml'] ) ) ) {
+	if ( empty( $_POST['pmprolml'] ) ) {
 		// Delete the "all" lock for the user.
 		pmprolml_delete_lock_for_user( $user_id, 0 );
 	} else {
