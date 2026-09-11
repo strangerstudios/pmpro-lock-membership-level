@@ -60,8 +60,8 @@ function pmprolml_membership_level_before_content_settings( $level ) {
 				printf( esc_html__( 'Learn more about the %s.', 'pmpro-lock-membership-level' ), $lock_membership_link ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				?>
 			</p>
-			<table>
-				<tbody class="form-table">
+			<table class="form-table">
+				<tbody>
 					<tr>
 						<th scope="row" valign="top"><label for="lml_lock"><?php esc_html_e('Lock This Level?', 'pmpro-lock-membership-level');?></label></th>
 						<td>
@@ -75,50 +75,52 @@ function pmprolml_membership_level_before_content_settings( $level ) {
 								<option value="" <?php selected($options['expiration'], '');?>><?php esc_html_e('Never', 'pmpro-lock-membership-level');?></option>
 								<option value="period" <?php selected($options['expiration'], 'period');?>><?php esc_html_e('Time Period', 'pmpro-lock-membership-level');?></option>				
 							</select>
-							<br /><br />
-							<input id="lml_expiration_number" name="lml_expiration_number" type="text" size="10" value="<?php echo esc_attr($options['expiration_number']);?>" />
-							<select id="lml_expiration_period" name="lml_expiration_period">
-							<?php
-								$cycles = array( 
-									esc_html__('Day(s)', 'pmpro-lock-membership-level') => 'Day', 
-									esc_html__('Week(s)', 'pmpro-lock-membership-level') => 'Week', 
-									esc_html__('Month(s)', 'pmpro-lock-membership-level') => 'Month', 
-									esc_html__('Year(s)', 'pmpro-lock-membership-level') => 'Year' );
-								foreach ( $cycles as $name => $value ) {
-								echo "<option value='$value'";
-								if ( $options['expiration_period'] == $value ) echo " selected='selected'";
-								echo ">$name</option>";
-								}
-							?>
-							</select>
+							<p>
+								<input id="lml_expiration_number" name="lml_expiration_number" type="text" size="10" value="<?php echo esc_attr( $options['expiration_number'] ); ?>" />
+								<select id="lml_expiration_period" name="lml_expiration_period">
+									<?php
+									$cycles = array(
+										'Day'   => __( 'Day(s)',   'pmpro-lock-membership-level' ),
+										'Week'  => __( 'Week(s)',  'pmpro-lock-membership-level' ),
+										'Month' => __( 'Month(s)', 'pmpro-lock-membership-level' ),
+										'Year'  => __( 'Year(s)',  'pmpro-lock-membership-level' ),
+									);
+									foreach ( $cycles as $value => $name ) {
+										?>
+										<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $options['expiration_period'], $value ); ?>><?php echo esc_html( $name ); ?></option>
+										<?php
+									}
+									?>
+								</select>
+							</p>
 						</td>
-					</tr>	
-					<script>
-						function toggleLMLOptions() {
-							if(jQuery('#lml_lock').is(':checked')) { 
-								jQuery('tr.lml_expiration').show();
-								if(jQuery('#lml_expiration').val() == 'period') {
-									jQuery('#lml_expiration_number, #lml_expiration_period').show();
-								} else {
-									jQuery('#lml_expiration_number, #lml_expiration_period').hide();
-								}
-							} else {
-								jQuery('tr.lml_expiration').hide();
-								jQuery('#lml_expiration_number, #lml_expiration_period').hide();
-							}
-						}
-						
-						jQuery(document).ready(function(){
-							//hide/show recurring fields on page load
-							toggleLMLOptions();
-							
-							//hide/show recurring fields when pbc or recurring settings change
-							jQuery('#lml_lock').change(function() { toggleLMLOptions() });			
-							jQuery('#lml_expiration').change(function() { toggleLMLOptions() });
-						});
-					</script>
+					</tr>
 				</tbody>
 			</table>
+			<script>
+				function toggleLMLOptions() {
+					if(jQuery('#lml_lock').is(':checked')) {
+						jQuery('tr.lml_expiration').show();
+						if(jQuery('#lml_expiration').val() == 'period') {
+							jQuery('#lml_expiration_number, #lml_expiration_period').show();
+						} else {
+							jQuery('#lml_expiration_number, #lml_expiration_period').hide();
+						}
+					} else {
+						jQuery('tr.lml_expiration').hide();
+						jQuery('#lml_expiration_number, #lml_expiration_period').hide();
+					}
+				}
+
+				jQuery(document).ready(function(){
+					//hide/show recurring fields on page load
+					toggleLMLOptions();
+
+					//hide/show recurring fields when pbc or recurring settings change
+					jQuery('#lml_lock').change(function() { toggleLMLOptions() });
+					jQuery('#lml_expiration').change(function() { toggleLMLOptions() });
+				});
+			</script>
 		</div> <!-- end .pmpro_section_inside -->
 	</div> <!-- end .pmpro_section -->
 	<?php

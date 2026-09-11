@@ -143,13 +143,6 @@ function pmprolml_hide_account_page_action_links( $links, $level_id ) {
 		unset( $links['cancel'] );
 		unset( $links['change'] );
 		unset( $links['renew'] );
-		?>
-		<style>
-			#pmpro_actionlink-levels {
-				display: none;
-			}
-		</style>
-		<?php
 	}
 	return $links;
 }
@@ -180,11 +173,11 @@ function pmpro_shortcode_membership_locked($atts, $content=null, $shortcode_tag=
 			$message = esc_html__( 'Your membership levels are locked. You are not allowed to change your membership levels.', 'pmpro-lock-membership-level' );
 		}
 	}
-	$r = '<div class="pmpro_message pmpro_error">' . $message . '</div>';
+	$r = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html( $message ) . '</div>';
 
 	// Show a link to the account page if needed.
-	if ( $current_user->membership_level->ID && ! empty( $account_link ) ) {
-		$r .= '<p><a href="' . pmpro_url("account") . '"> &larr; ' . esc_html__("Return to Your Account", "pmpro-lock-membership-level") . '</a></p>';
+	if ( ! empty( $current_user->membership_level->ID ) && ! empty( $account_link ) ) {
+		$r .= '<div class="' . esc_attr( pmpro_get_element_class( 'pmpro_actions_nav' ) ) . '"><span class="' . esc_attr( pmpro_get_element_class( 'pmpro_actions_nav-left' ) ) . '"><a href="' . esc_url( pmpro_url( 'account' ) ) . '">&larr; ' . esc_html__( 'Return to Your Account', 'pmpro-lock-membership-level' ) . '</a></span></div>';
 	}
 
 	return $r;
@@ -197,20 +190,71 @@ add_shortcode("pmpro_membership_locked", "pmpro_shortcode_membership_locked");
  * @param string $content The content of the page.
  */
 function pmprolml_show_account_page_error( $content ) {
-	global $pmpro_pages;
+	global $pmpro_pages, $current_user;
 
 	// Check that we are on the PMPro Account page.
 	if ( empty( $pmpro_pages ) || empty( $pmpro_pages['account'] ) || ! is_page( $pmpro_pages['account'] ) ) {
 		return $content;
 	}
 
+	$show_message = false;
+
 	if ( isset( $_REQUEST['pmprolml_redirect'] ) ) {
 		// User has locked membership and was redirected here.
-		echo pmpro_shortcode_membership_locked( array(
-			'account_link' => '0',
-		) );
+		$show_message = true;
+	} elseif ( ! empty( $current_user->ID ) && pmprolml_is_level_locked_for_user( $current_user->ID, 0 ) && empty( pmpro_getMembershipLevelsForUser( $current_user->ID ) ) ) {
+		// User has an "all levels" lock but holds no membership, so there is no
+		// level card to show the locked status on. Show the message at the top.
+		$show_message = true;
 	}
-		
+
+	if ( $show_message ) {
+		$content = '<div class="' . esc_attr( pmpro_get_element_class( 'pmpro' ) ) . '">' . pmpro_shortcode_membership_locked( array( 'account_link' => '0' ) ) . '</div>' . $content;
+	}
+
 	return $content;
 }
 add_filter( 'the_content', 'pmprolml_show_account_page_error' );
+
+/**
+ * Show a message on each locked level card on the Membership Account page.
+ *
+ * @since TBD
+ *
+ * @param object $level The membership level object for the card being displayed.
+ */
+function pmprolml_account_level_card_lock_message( $level ) {
+	global $current_user;
+
+	// Bail if this level isn't locked for the user.
+	if ( empty( $current_user->ID ) || ! pmprolml_is_level_locked_for_user( $current_user->ID, $level->id ) ) {
+		return;
+	}
+
+	// Find the lock that applies to this card to read its expiration. A lock on
+	// level 0 ("all levels") applies to every card.
+	$expiration = 0;
+	foreach ( pmprolml_get_locks_for_user( $current_user->ID ) as $lock ) {
+		if ( (int) $lock['level_id'] === (int) $level->id || (int) $lock['level_id'] === 0 ) {
+			$expiration = (int) $lock['expiration'];
+			break;
+		}
+	}
+
+	// Build the message, including the expiration date if the lock expires.
+	if ( ! empty( $expiration ) ) {
+		$message = sprintf(
+			/* translators: %s: the date the lock expires. */
+			esc_html__( 'This membership is locked until %s and cannot be changed.', 'pmpro-lock-membership-level' ),
+			esc_html( date_i18n( get_option( 'date_format' ), $expiration ) )
+		);
+	} else {
+		$message = esc_html__( 'This membership is locked and cannot be changed.', 'pmpro-lock-membership-level' );
+	}
+	?>
+	<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_account-membership-message' ) ); ?>">
+		<?php echo $message; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above. ?>
+	</div>
+	<?php
+}
+add_action( 'pmpro_membership_account_after_level_card_content', 'pmprolml_account_level_card_lock_message' );
