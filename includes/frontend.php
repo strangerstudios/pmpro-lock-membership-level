@@ -173,7 +173,7 @@ function pmpro_shortcode_membership_locked($atts, $content=null, $shortcode_tag=
 			$message = esc_html__( 'Your membership levels are locked. You are not allowed to change your membership levels.', 'pmpro-lock-membership-level' );
 		}
 	}
-	$r = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html( $message ) . '</div>';
+	$r = '<div class="' . esc_attr( pmpro_get_element_class( 'pmpro_message pmpro_error' ) ) . '">' . esc_html( $message ) . '</div>';
 
 	// Show a link to the account page if needed.
 	if ( ! empty( $current_user->membership_level->ID ) && ! empty( $account_link ) ) {
@@ -231,14 +231,23 @@ function pmprolml_account_level_card_lock_message( $level ) {
 		return;
 	}
 
-	// Find the lock that applies to this card to read its expiration. A lock on
-	// level 0 ("all levels") applies to every card.
-	$expiration = 0;
+	// Find the lock that applies to this card to read its expiration. Prefer a
+	// lock on this specific level; fall back to a lock on level 0 ("all levels").
+	$expiration     = 0;
+	$all_levels_exp = null;
+	$found_specific = false;
 	foreach ( pmprolml_get_locks_for_user( $current_user->ID ) as $lock ) {
-		if ( (int) $lock['level_id'] === (int) $level->id || (int) $lock['level_id'] === 0 ) {
-			$expiration = (int) $lock['expiration'];
+		if ( (int) $lock['level_id'] === (int) $level->id ) {
+			$expiration     = (int) $lock['expiration'];
+			$found_specific = true;
 			break;
 		}
+		if ( (int) $lock['level_id'] === 0 && null === $all_levels_exp ) {
+			$all_levels_exp = (int) $lock['expiration'];
+		}
+	}
+	if ( ! $found_specific && null !== $all_levels_exp ) {
+		$expiration = $all_levels_exp;
 	}
 
 	// Build the message, including the expiration date if the lock expires.

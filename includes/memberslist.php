@@ -29,7 +29,7 @@ function pmprolml_manage_memberslist_custom_column( $colname, $user_id, $item = 
 		if ( $is_locked ) {
 			echo '<span class="pmpro_tag pmpro_tag-has_icon pmpro_tag-alert">' . esc_html__( 'Locked', 'pmpro-lock-membership-level' ) . '</span>';
 		} else {
-			echo esc_html__( '&#8212;', 'pmpro-lock-membership-level' );
+			echo '&#8212;';
 		}
 	}
 }
