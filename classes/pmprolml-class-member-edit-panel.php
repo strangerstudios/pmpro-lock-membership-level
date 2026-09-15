@@ -80,7 +80,7 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 									echo esc_html( $expiration );
 									?>
 								</td>
-								<td><input type="submit" name="pmprolml_delete_lock_<?php echo (int)$lock['level_id'] ?>" value="<?php esc_html_e( 'Delete', 'pmpro-lock-membership-level' ); ?>" class="button" /></td>
+								<td><input type="submit" name="pmprolml_delete_lock_<?php echo (int)$lock['level_id'] ?>" value="<?php esc_html_e( 'Delete', 'pmpro-lock-membership-level' ); ?>" class="button is-destructive" /></td>
 							</tr>
 							<?php
 						}
