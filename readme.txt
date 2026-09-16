@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, restrict, lock, block, admin
 Requires at least: 4.0
 Tested up to: 6.9
-Stable tag: 1.0.2
+Stable tag: 1.1
 
 Lock membership level changes for specific users or by level.
 
@@ -31,7 +31,7 @@ Note that a locked member will still "expire" if there is an expiration date set
 == How to Lock a Membership Level for a Specific Term ==
 1. Edit the membership level on the Memberships > Membership Levels > Edit Membership Level page.
 1. Under "Lock Membership Level Settings", check the box to lock the membership level.
-1. The level can be set to unlock "Never" or after a specified time period (X days, weeks, months, or years).
+1. The level can be set to unlock "Never", after a specified time period (X days, weeks, months, or years), or after a specified number of successful payments have been made.
 
 == How to View Locked Members ==
 1. Navigate to the Memberships > Members List page in the WordPress admin.
@@ -48,6 +48,9 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 1.1 - 2026-09-16 =
+* FEATURE: Membership levels can now be set to unlock after a specified number of successful payments have been made, as an alternative to unlocking after a fixed time period. #32 (@flintfromthebasement)
+
 = 1.0.2 - 2026-05-01 =
 * ENHANCEMENT: Added a hint and proper `<label>` to the Membership Level field in the Locked Memberships panel of the Edit Member page to clarify how the setting works. #35 (@flintfromthebasement)
 * ENHANCEMENT: Added a "Learn more" link to the Lock Membership Level Add On documentation in the level settings section on the Edit Membership Level page. #34 (@kimcoleman)

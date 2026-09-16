@@ -338,29 +338,35 @@ function pmprolml_account_level_card_lock_message( $level ) {
 
 	// Find the lock that applies to this card to read its expiration. Prefer a
 	// lock on this specific level; fall back to a lock on level 0 ("all levels").
-	$expiration     = 0;
-	$all_levels_exp = null;
-	$found_specific = false;
+	$matched_lock  = null;
+	$all_levels_lock = null;
 	foreach ( pmprolml_get_locks_for_user( $current_user->ID ) as $lock ) {
 		if ( (int) $lock['level_id'] === (int) $level->id ) {
-			$expiration     = (int) $lock['expiration'];
-			$found_specific = true;
+			$matched_lock = $lock;
 			break;
 		}
-		if ( (int) $lock['level_id'] === 0 && null === $all_levels_exp ) {
-			$all_levels_exp = (int) $lock['expiration'];
+		if ( (int) $lock['level_id'] === 0 && null === $all_levels_lock ) {
+			$all_levels_lock = $lock;
 		}
 	}
-	if ( ! $found_specific && null !== $all_levels_exp ) {
-		$expiration = $all_levels_exp;
+	if ( null === $matched_lock ) {
+		$matched_lock = $all_levels_lock;
 	}
 
-	// Build the message, including the expiration date if the lock expires.
-	if ( ! empty( $expiration ) ) {
+	// Build the message, including the expiration date or required payment count if the lock expires.
+	if ( ! empty( $matched_lock['payments_required'] ) ) {
+		$payments_made = pmprolml_count_successful_payments_for_user( $current_user->ID, $matched_lock['level_id'] );
+		$message = sprintf(
+			/* translators: 1: number of successful payments required to unlock, 2: number of successful payments made so far. */
+			esc_html__( 'This membership is locked until %1$d successful payments have been made (%2$d so far) and cannot be changed.', 'pmpro-lock-membership-level' ),
+			(int) $matched_lock['payments_required'],
+			(int) $payments_made
+		);
+	} elseif ( ! empty( $matched_lock['expiration'] ) ) {
 		$message = sprintf(
 			/* translators: %s: the date the lock expires. */
 			esc_html__( 'This membership is locked until %s and cannot be changed.', 'pmpro-lock-membership-level' ),
-			esc_html( date_i18n( get_option( 'date_format' ), $expiration ) )
+			esc_html( date_i18n( get_option( 'date_format' ), (int) $matched_lock['expiration'] ) )
 		);
 	} else {
 		$message = esc_html__( 'This membership is locked and cannot be changed.', 'pmpro-lock-membership-level' );

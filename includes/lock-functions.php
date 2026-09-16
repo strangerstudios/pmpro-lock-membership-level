@@ -43,6 +43,12 @@ function pmprolml_get_locks_for_user( $user_id ) {
 			continue;
 		}
 
+		// If the lock requires a number of successful payments and that many have been made, delete it.
+		if ( ! empty( $lock['payments_required'] ) && pmprolml_count_successful_payments_for_user( $user_id, $lock['level_id'] ) >= (int)$lock['payments_required'] ) {
+			delete_user_meta( $user_id, 'pmprolml_lock', $lock );
+			continue;
+		}
+
 		// Add the lock to the array to return.
 		$user_locks_to_return[] = $lock;
 	}
@@ -93,6 +99,31 @@ function pmprolml_is_level_locked_for_user( $user_id, $level_id ) {
 }
 
 /**
+ * Count the number of successful payments a user has made for a membership level.
+ *
+ * @since TBD
+ *
+ * @param int $user_id The user ID to check.
+ * @param int $level_id The level ID to check, or 0 to count successful payments for all levels.
+ * @return int The number of successful payments.
+ */
+function pmprolml_count_successful_payments_for_user( $user_id, $level_id ) {
+	global $wpdb;
+
+	// Make sure we have all ints.
+	$user_id = (int)$user_id;
+	$level_id = (int)$level_id;
+
+	if ( empty( $level_id ) ) {
+		$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->pmpro_membership_orders WHERE user_id = %d AND status = 'success'", $user_id ) );
+	} else {
+		$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->pmpro_membership_orders WHERE user_id = %d AND membership_id = %d AND status = 'success'", $user_id, $level_id ) );
+	}
+
+	return (int)$count;
+}
+
+/**
  * Add a lock for a user.
  *
  * @since 1.0
@@ -100,12 +131,14 @@ function pmprolml_is_level_locked_for_user( $user_id, $level_id ) {
  * @param int $user_id The user ID to add the lock for.
  * @param int $level_id The level ID to lock or 0 to lock all levels.
  * @param int $expiration The expiration timestamp or 0 for no expiration.
+ * @param int $payments_required The number of successful payments required to unlock, or 0 to not use this criteria.
  */
-function pmprolml_add_lock_for_user( $user_id, $level_id, $expiration ) {
+function pmprolml_add_lock_for_user( $user_id, $level_id, $expiration, $payments_required = 0 ) {
 	// Make sure we have all ints.
 	$user_id = (int)$user_id;
 	$level_id = (int)$level_id;
 	$expiration = (int)$expiration;
+	$payments_required = (int)$payments_required;
 
 	// If using PMPro v2.x, we only want to consider "all" locks (level_id = 0).
 	if ( ! class_exists( 'PMPro_Member_Edit_Panel' ) ) {
@@ -116,6 +149,7 @@ function pmprolml_add_lock_for_user( $user_id, $level_id, $expiration ) {
 	$lock_data = array(
 		'level_id' => $level_id,
 		'expiration' => $expiration,
+		'payments_required' => $payments_required,
 	);
 
 	// Check if the user already has a lock for the same level.
@@ -199,13 +233,16 @@ function pmprolml_after_all_membership_level_changes( $pmpro_old_user_levels ) {
 		foreach ( $added_levels as $level_id ) {
 			$options = pmprolml_getLevelOptions( $level_id );
 			if ( ! empty( $options ) && $options['lock'] == 1 ) {
-				if ( ! empty( $options['expiration'] ) && ! empty( $options['expiration_number'] ) ) {
+				$expiration = 0;
+				$payments_required = 0;
+
+				if ( 'period' === $options['expiration'] && ! empty( $options['expiration_number'] ) ) {
 					$expiration = strtotime( '+' . $options['expiration_number'] . ' ' . $options['expiration_period'] );
-				} else {
-					$expiration = 0;
+				} elseif ( 'payments' === $options['expiration'] && ! empty( $options['expiration_payments_count'] ) ) {
+					$payments_required = (int)$options['expiration_payments_count'];
 				}
 
-				pmprolml_add_lock_for_user( $user_id, $level_id, $expiration );
+				pmprolml_add_lock_for_user( $user_id, $level_id, $expiration, $payments_required );
 			}
 		}
 

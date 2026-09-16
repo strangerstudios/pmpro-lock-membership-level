@@ -75,9 +75,20 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 								</td>
 								<td>
 									<?php
-									// Get expiration in local time.
-									$expiration = empty( $lock['expiration'] ) ? __( 'Never', 'pmpro-lock-membership-level' ) : get_date_from_gmt( date( 'Y-m-d H:i:s', $lock['expiration'] ), get_option( 'date_format' ) ) . ' at ' . get_date_from_gmt( date( 'Y-m-d H:i:s', $lock['expiration'] ), get_option( 'time_format' ) );
-									echo esc_html( $expiration );
+									if ( ! empty( $lock['payments_required'] ) ) {
+										// This lock unlocks after a number of successful payments have been made.
+										$payments_made = pmprolml_count_successful_payments_for_user( $user->ID, $lock['level_id'] );
+										printf(
+											/* translators: 1: number of successful payments made so far, 2: number of successful payments required to unlock. */
+											esc_html__( 'After %2$d successful payment(s) (%1$d so far)', 'pmpro-lock-membership-level' ),
+											(int) $payments_made,
+											(int) $lock['payments_required']
+										);
+									} else {
+										// Get expiration in local time.
+										$expiration = empty( $lock['expiration'] ) ? __( 'Never', 'pmpro-lock-membership-level' ) : get_date_from_gmt( date( 'Y-m-d H:i:s', $lock['expiration'] ), get_option( 'date_format' ) ) . ' at ' . get_date_from_gmt( date( 'Y-m-d H:i:s', $lock['expiration'] ), get_option( 'time_format' ) );
+										echo esc_html( $expiration );
+									}
 									?>
 								</td>
 								<td><input type="submit" name="pmprolml_delete_lock_<?php echo (int)$lock['level_id'] ?>" value="<?php esc_html_e( 'Delete', 'pmpro-lock-membership-level' ); ?>" class="button is-destructive" /></td>

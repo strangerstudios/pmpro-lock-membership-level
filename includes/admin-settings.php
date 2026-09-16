@@ -23,7 +23,14 @@ add_action('pmpro_extra_page_settings', 'pmprolml_extra_page_settings');
  * @return array The lock options for the level.
  */
 function pmprolml_getLevelOptions($level_id) {
-	return get_option('pmprolml_level_' . intval($level_id) . '_settings', array('lock' => 0, 'expiration' => null,'expiration_number' => null, 'expiration_period' => null ) );
+	$options = get_option('pmprolml_level_' . intval($level_id) . '_settings', array('lock' => 0, 'expiration' => null,'expiration_number' => null, 'expiration_period' => null ) );
+
+	// For backwards-compatibility, options saved before the payment-count option was added won't have this key set.
+	if ( ! isset( $options['expiration_payments_count'] ) ) {
+		$options['expiration_payments_count'] = null;
+	}
+
+	return $options;
 }
 
 /**
@@ -73,9 +80,10 @@ function pmprolml_membership_level_before_content_settings( $level ) {
 						<td>
 							<select id="lml_expiration" name="lml_expiration">
 								<option value="" <?php selected($options['expiration'], '');?>><?php esc_html_e('Never', 'pmpro-lock-membership-level');?></option>
-								<option value="period" <?php selected($options['expiration'], 'period');?>><?php esc_html_e('Time Period', 'pmpro-lock-membership-level');?></option>				
+								<option value="period" <?php selected($options['expiration'], 'period');?>><?php esc_html_e('Time Period', 'pmpro-lock-membership-level');?></option>
+								<option value="payments" <?php selected($options['expiration'], 'payments');?>><?php esc_html_e('Number of Successful Payments', 'pmpro-lock-membership-level');?></option>
 							</select>
-							<p>
+							<p class="lml_expiration_period_fields">
 								<input id="lml_expiration_number" name="lml_expiration_number" type="text" size="10" value="<?php echo esc_attr( $options['expiration_number'] ); ?>" />
 								<select id="lml_expiration_period" name="lml_expiration_period">
 									<?php
@@ -93,6 +101,11 @@ function pmprolml_membership_level_before_content_settings( $level ) {
 									?>
 								</select>
 							</p>
+							<p class="lml_expiration_payments_fields">
+								<input id="lml_expiration_payments_count" name="lml_expiration_payments_count" type="number" min="1" step="1" size="10" value="<?php echo esc_attr( $options['expiration_payments_count'] ); ?>" />
+								<?php esc_html_e( 'successful payment(s)', 'pmpro-lock-membership-level' ); ?>
+								<p class="description"><?php esc_html_e( 'The level will unlock once this many successful payments have been made for it.', 'pmpro-lock-membership-level' ); ?></p>
+							</p>
 						</td>
 					</tr>
 				</tbody>
@@ -101,14 +114,11 @@ function pmprolml_membership_level_before_content_settings( $level ) {
 				function toggleLMLOptions() {
 					if(jQuery('#lml_lock').is(':checked')) {
 						jQuery('tr.lml_expiration').show();
-						if(jQuery('#lml_expiration').val() == 'period') {
-							jQuery('#lml_expiration_number, #lml_expiration_period').show();
-						} else {
-							jQuery('#lml_expiration_number, #lml_expiration_period').hide();
-						}
+						jQuery('.lml_expiration_period_fields').toggle(jQuery('#lml_expiration').val() == 'period');
+						jQuery('.lml_expiration_payments_fields').toggle(jQuery('#lml_expiration').val() == 'payments');
 					} else {
 						jQuery('tr.lml_expiration').hide();
-						jQuery('#lml_expiration_number, #lml_expiration_period').hide();
+						jQuery('.lml_expiration_period_fields, .lml_expiration_payments_fields').hide();
 					}
 				}
 
@@ -138,26 +148,30 @@ function pmprolml_pmpro_save_membership_level($level_id) {
 	
 	if(!empty($lml_lock) && isset($_REQUEST['lml_expiration'])) {
 		$lml_expiration = sanitize_text_field($_REQUEST['lml_expiration']);
-		if(!in_array($lml_expiration, array('period')))
+		if(!in_array($lml_expiration, array('period', 'payments')))
 			$lml_expiration = '';
-		
+
 		$lml_expiration_number = intval($_REQUEST['lml_expiration_number']);
-		
+
 		$lml_expiration_period = sanitize_text_field($_REQUEST['lml_expiration_period']);
 		if(!in_array($lml_expiration_period, array('Day', 'Week', 'Month', 'Year')))
 			$lml_expiration_period = '';
+
+		$lml_expiration_payments_count = intval($_REQUEST['lml_expiration_payments_count']);
 	} else {
 		$lml_expiration = '';
 		$lml_expiration_number = '';
 		$lml_expiration_period = '';
+		$lml_expiration_payments_count = '';
 	}
-	
+
 	//build array
 	$options = array(
 		'lock' => $lml_lock, // true or false.
-		'expiration' => $lml_expiration, // Empty string if locks do not expire, 'period' if they expire after a set period.	
+		'expiration' => $lml_expiration, // Empty string if locks do not expire, 'period' if they expire after a set period, 'payments' if they expire after a number of successful payments.
 		'expiration_number' => $lml_expiration_number, // Number of periods until locks expire.
 		'expiration_period' => $lml_expiration_period, // Length of a single period.
+		'expiration_payments_count' => $lml_expiration_payments_count, // Number of successful payments until locks expire.
 	);
 	
 	//save
