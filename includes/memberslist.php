@@ -96,10 +96,11 @@ add_action('pmpro_members_list_sql', 'pmprolml_pmpro_members_list_sql');
 function pmprolml_pmpro_members_list_csv_extra_columns($columns) {
 	$new_columns = array(
 		"lockedmember" => "pmprolml_extra_column_lockedmember",
+		"lockedmemberexpiration" => "pmprolml_extra_column_lockedmemberexpiration",
 	);
-	
+
 	$columns = array_merge($columns, $new_columns);
-	
+
 	return $columns;
 }
 add_filter('pmpro_members_list_csv_extra_columns', 'pmprolml_pmpro_members_list_csv_extra_columns');
@@ -112,6 +113,29 @@ add_filter('pmpro_members_list_csv_extra_columns', 'pmprolml_pmpro_members_list_
  */
 function pmprolml_extra_column_lockedmember($user) {
 	return pmprolml_is_level_locked_for_user( $user->ID, $user->membership_id ) ? '1' : '';
+}
+
+/**
+ * Callback for "Locked Member Expiration" column in CSV export
+ *
+ * @param object $user The user object for the row with some additional membership data.
+ * @return string
+ */
+function pmprolml_extra_column_lockedmemberexpiration($user) {
+	$locks = pmprolml_get_locks_for_user( $user->ID );
+
+	foreach ( $locks as $lock ) {
+		if ( (int)$lock['level_id'] === (int)$user->membership_id || (int)$lock['level_id'] === 0 ) {
+			if ( empty( $lock['expiration'] ) ) {
+				return '';
+			}
+
+			// Convert the stored GMT timestamp back to the site's local time for the CSV.
+			return get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $lock['expiration'] ), 'Y-m-d H:i:s' );
+		}
+	}
+
+	return '';
 }
 
 /**

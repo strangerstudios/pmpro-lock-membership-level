@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, restrict, lock, block, admin
 Requires at least: 4.0
 Tested up to: 6.9
-Stable tag: 1.0.2
+Stable tag: 1.1
 
 Lock membership level changes for specific users or by level.
 
@@ -48,6 +48,10 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 1.1 - 2026-09-15 =
+* FEATURE: Added a "Locked Member Expiration" column to the Members List CSV export. #31 (@flintfromthebasement)
+* FEATURE: Added support for importing locked member data (locked status and expiration) when using the Import Users from CSV Add On. #31 (@flintfromthebasement)
+
 = 1.0.2 - 2026-05-01 =
 * ENHANCEMENT: Added a hint and proper `<label>` to the Membership Level field in the Locked Memberships panel of the Edit Member page to clarify how the setting works. #35 (@flintfromthebasement)
 * ENHANCEMENT: Added a "Learn more" link to the Lock Membership Level Add On documentation in the level settings section on the Edit Membership Level page. #34 (@kimcoleman)
