@@ -97,6 +97,7 @@ function pmprolml_pmpro_members_list_csv_extra_columns($columns) {
 	$new_columns = array(
 		"lockedmember" => "pmprolml_extra_column_lockedmember",
 		"lockedmemberexpiration" => "pmprolml_extra_column_lockedmemberexpiration",
+		"lockedmemberpayments" => "pmprolml_extra_column_lockedmemberpayments",
 	);
 
 	$columns = array_merge($columns, $new_columns);
@@ -116,26 +117,58 @@ function pmprolml_extra_column_lockedmember($user) {
 }
 
 /**
+ * Get the active lock that applies to the membership level being exported for a user.
+ *
+ * @since TBD
+ *
+ * @param object $user The user object for the row with some additional membership data.
+ * @return array|null The lock record, or null if the level is not locked.
+ */
+function pmprolml_get_export_lock_for_user( $user ) {
+	foreach ( pmprolml_get_locks_for_user( $user->ID ) as $lock ) {
+		if ( (int)$lock['level_id'] === (int)$user->membership_id || (int)$lock['level_id'] === 0 ) {
+			return $lock;
+		}
+	}
+
+	return null;
+}
+
+/**
  * Callback for "Locked Member Expiration" column in CSV export
  *
  * @param object $user The user object for the row with some additional membership data.
  * @return string
  */
 function pmprolml_extra_column_lockedmemberexpiration($user) {
-	$locks = pmprolml_get_locks_for_user( $user->ID );
+	$lock = pmprolml_get_export_lock_for_user( $user );
 
-	foreach ( $locks as $lock ) {
-		if ( (int)$lock['level_id'] === (int)$user->membership_id || (int)$lock['level_id'] === 0 ) {
-			if ( empty( $lock['expiration'] ) ) {
-				return '';
-			}
-
-			// Convert the stored GMT timestamp back to the site's local time for the CSV.
-			return get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $lock['expiration'] ), 'Y-m-d H:i:s' );
-		}
+	if ( empty( $lock ) || empty( $lock['expiration'] ) ) {
+		return '';
 	}
 
-	return '';
+	// Convert the stored GMT timestamp back to the site's local time for the CSV.
+	return get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $lock['expiration'] ), 'Y-m-d H:i:s' );
+}
+
+/**
+ * Callback for "Locked Member Payments" column in CSV export.
+ *
+ * The number of successful payments required to unlock, or blank if the lock is not payment-based.
+ *
+ * @since TBD
+ *
+ * @param object $user The user object for the row with some additional membership data.
+ * @return string
+ */
+function pmprolml_extra_column_lockedmemberpayments($user) {
+	$lock = pmprolml_get_export_lock_for_user( $user );
+
+	if ( empty( $lock ) || empty( $lock['payments_required'] ) ) {
+		return '';
+	}
+
+	return (string)(int)$lock['payments_required'];
 }
 
 /**
