@@ -15,6 +15,7 @@ function pmprolml_pmproiucsv_mapping_fields( $fields ) {
 		'fields' => array(
 			'pmprolml_lockedmember'             => __( 'Locked Member', 'pmpro-lock-membership-level' ),
 			'pmprolml_lockedmember_expiration'  => __( 'Locked Member Expiration', 'pmpro-lock-membership-level' ),
+			'pmprolml_lockedmember_payments'    => __( 'Locked Member Payments Required', 'pmpro-lock-membership-level' ),
 		),
 	);
 
@@ -34,6 +35,7 @@ add_filter( 'pmproiucsv_mapping_fields', 'pmprolml_pmproiucsv_mapping_fields' );
 function pmprolml_pmproiucsv_field_aliases( $aliases ) {
 	$aliases['lockedmember'] = 'pmprolml_lockedmember';
 	$aliases['lockedmemberexpiration'] = 'pmprolml_lockedmember_expiration';
+	$aliases['lockedmemberpayments'] = 'pmprolml_lockedmember_payments';
 
 	return $aliases;
 }
@@ -60,12 +62,16 @@ function pmprolml_pmproiucsv_after_member_import( $user, $membership_id, $order 
 		return;
 	}
 
+	// A payment-based lock takes precedence over an expiration date, matching the level settings where only one can be chosen.
+	$payments_required = empty( $user->pmprolml_lockedmember_payments ) ? 0 : (int)$user->pmprolml_lockedmember_payments;
+
 	$expiration = 0;
-	if ( ! empty( $user->pmprolml_lockedmember_expiration ) ) {
+	if ( empty( $payments_required ) && ! empty( $user->pmprolml_lockedmember_expiration ) ) {
 		// The CSV value is in the site's local time, matching the export format. Convert to a GMT timestamp for storage.
 		$expiration = (int)strtotime( get_gmt_from_date( $user->pmprolml_lockedmember_expiration ) );
 	}
 
-	pmprolml_add_lock_for_user( $user->ID, (int)$membership_id, $expiration );
+	// If an order was created during this import, it has already been tracked as this lock's checkout order.
+	pmprolml_add_lock_for_user( $user->ID, (int)$membership_id, $expiration, $payments_required );
 }
 add_action( 'pmproiucsv_after_member_import', 'pmprolml_pmproiucsv_after_member_import', 10, 3 );

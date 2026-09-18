@@ -80,7 +80,7 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 										$payments_made = pmprolml_count_successful_payments_for_user( $user->ID, $lock['level_id'], $lock );
 										printf(
 											/* translators: 1: number of successful payments made so far, 2: number of successful payments required to unlock. */
-											esc_html__( 'After %2$d successful payment(s) (%1$d so far)', 'pmpro-lock-membership-level' ),
+											esc_html__( 'After %2$d successful payment(s) (%1$d/%2$d successful payments)', 'pmpro-lock-membership-level' ),
 											(int) $payments_made,
 											(int) $lock['payments_required']
 										);
@@ -138,8 +138,13 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 									<select id="pmprolml_expiration" name="pmprolml_expiration">
 										<option value="0"><?php esc_html_e( 'Never', 'pmpro-lock-membership-level' ); ?></option>
 										<option value="1"><?php esc_html_e( 'Specific Date', 'pmpro-lock-membership-level' ); ?></option>
+										<option value="2"><?php esc_html_e( 'After a Number of Successful Payments', 'pmpro-lock-membership-level' ); ?></option>
 									</select>
 									<input type="datetime-local" name="pmprolml_expiration_date" style="display: none;" value="<?php echo esc_attr( date( 'Y-m-d H:i', strtotime( '+1 year', current_time( 'timestamp' ) ) ) ); ?>"/>
+									<span class="pmprolml_expiration_payments_fields" style="display: none;">
+										<input type="number" name="pmprolml_expiration_payments_count" min="1" step="1" class="small-text" value="1" />
+										<p class="description"><?php esc_html_e( 'The lock is removed once the member has made this many successful payments for this level. Only payments made during the current membership are counted.', 'pmpro-lock-membership-level' ); ?></p>
+									</span>
 								</span>
 							</div>
 							<div class="pmpro-level_change-action-footer">
@@ -161,13 +166,11 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 
 		<script>
 			jQuery(document).ready(function() {
-				// Show/hide the expiration date field.
+				// Show/hide the expiration date and payment count fields.
 				jQuery('select[name=pmprolml_expiration]').change(function() {
-					if ( jQuery(this).val() === '1' ) {
-						jQuery('input[name=pmprolml_expiration_date]').show();
-					} else {
-						jQuery('input[name=pmprolml_expiration_date]').hide();
-					}
+					var expiration = jQuery(this).val();
+					jQuery('input[name=pmprolml_expiration_date]').toggle( expiration === '1' );
+					jQuery('.pmprolml_expiration_payments_fields').toggle( expiration === '2' );
 				});
 
 				// Button to show add lock.
@@ -213,8 +216,17 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 		// Check for adds/updates.
 		if ( ! empty( $_POST['pmprolml_add_lock'] ) ) {
 			$level_id = (int)$_POST['pmprolml_level_id'];
-			$expiration = (int)$_POST['pmprolml_expiration'] === 1 ? strtotime( get_gmt_from_date( $_POST['pmprolml_expiration_date'] ) ) : 0;
-			pmprolml_add_lock_for_user( self::get_user()->ID, $level_id, $expiration );
+			$expiration_type = (int)$_POST['pmprolml_expiration'];
+			$expiration = 0;
+			$payments_required = 0;
+			if ( 1 === $expiration_type ) {
+				// Lock expires on a specific date.
+				$expiration = strtotime( get_gmt_from_date( sanitize_text_field( $_POST['pmprolml_expiration_date'] ) ) );
+			} elseif ( 2 === $expiration_type ) {
+				// Lock expires after a number of successful payments.
+				$payments_required = isset( $_POST['pmprolml_expiration_payments_count'] ) ? max( 1, (int)$_POST['pmprolml_expiration_payments_count'] ) : 1;
+			}
+			pmprolml_add_lock_for_user( self::get_user()->ID, $level_id, $expiration, $payments_required );
 		}
 	}
 }
