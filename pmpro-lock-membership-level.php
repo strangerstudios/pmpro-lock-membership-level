@@ -14,6 +14,7 @@ require_once( plugin_dir_path( __FILE__ ) . 'includes/lock-functions.php' );   /
 require_once( plugin_dir_path( __FILE__ ) . 'includes/frontend.php' );       // Enforce locks on the frontend.
 require_once( plugin_dir_path( __FILE__ ) . 'includes/admin-settings.php' ); // Admin page settings and level settings.
 require_once( plugin_dir_path( __FILE__ ) . 'includes/memberslist.php' );    // Showing locked members in the members list.
+require_once( plugin_dir_path( __FILE__ ) . 'includes/import.php' );        // Importing locked member data via Import Users from CSV.
 require_once( plugin_dir_path( __FILE__ ) . 'includes/deprecated.php' );     // Include legacy functions for PMPro v2.x.
 
 /**

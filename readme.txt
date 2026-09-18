@@ -55,8 +55,10 @@ Please visit our premium support site at https://www.paidmembershipspro.com for 
 * ENHANCEMENT: The Locked Memberships panel on the Edit Member page now shows an "Unlocked" tag on payment-based locks whose requirement has been met.
 * ENHANCEMENT: Reworked the "Unlock When?" fields on the Edit Membership Level page to match the layout of the other level settings.
 
-= 1.1 - 2026-09-16 =
-* FEATURE: Membership levels can now be set to unlock after a specified number of successful payments have been made, as an alternative to unlocking after a fixed time period. #32 (@flintfromthebasement)
+= 1.1 - 2026-09-15 =
+* FEATURE: Added a "Locked Member Expiration" column to the Members List CSV export. #31 (@flintfromthebasement)
+* FEATURE: Added support for importing locked member data (locked status and expiration) when using the Import Users from CSV Add On. #31 (@flintfromthebasement)
+
 
 = 1.0.2 - 2026-05-01 =
 * ENHANCEMENT: Added a hint and proper `<label>` to the Membership Level field in the Locked Memberships panel of the Edit Member page to clarify how the setting works. #35 (@flintfromthebasement)
