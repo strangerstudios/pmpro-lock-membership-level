@@ -31,7 +31,7 @@ Note that a locked member will still "expire" if there is an expiration date set
 == How to Lock a Membership Level for a Specific Term ==
 1. Edit the membership level on the Memberships > Membership Levels > Edit Membership Level page.
 1. Under "Lock Membership Level Settings", check the box to lock the membership level.
-1. The level can be set to unlock "Never" or after a specified time period (X days, weeks, months, or years).
+1. The level can be set to unlock "Never", after a specified time period (X days, weeks, months, or years), or after a specified number of successful payments have been made.
 
 == How to View Locked Members ==
 1. Navigate to the Memberships > Members List page in the WordPress admin.
@@ -48,9 +48,17 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= TBD =
+* BUG FIX: Payment-based locks are no longer deleted once the required number of payments is reached. The requirement is now checked each time locks are read, so deleting or refunding a counted order locks the membership again.
+* BUG FIX: Payment-based locks now only count payments dated on or after the start of the current membership (plus the checkout payment itself). Payments from an earlier period on the same level no longer count toward unlocking.
+* BUG FIX: Orders with a total of zero are no longer counted as successful payments.
+* ENHANCEMENT: The Locked Memberships panel on the Edit Member page now shows an "Unlocked" tag on payment-based locks whose requirement has been met.
+* ENHANCEMENT: Reworked the "Unlock When?" fields on the Edit Membership Level page to match the layout of the other level settings.
+
 = 1.1 - 2026-09-15 =
 * FEATURE: Added a "Locked Member Expiration" column to the Members List CSV export. #31 (@flintfromthebasement)
 * FEATURE: Added support for importing locked member data (locked status and expiration) when using the Import Users from CSV Add On. #31 (@flintfromthebasement)
+
 
 = 1.0.2 - 2026-05-01 =
 * ENHANCEMENT: Added a hint and proper `<label>` to the Membership Level field in the Locked Memberships panel of the Edit Member page to clarify how the setting works. #35 (@flintfromthebasement)
