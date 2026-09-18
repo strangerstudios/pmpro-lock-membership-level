@@ -355,17 +355,15 @@ function pmprolml_account_level_card_lock_message( $level ) {
 
 	// Build the message, including the expiration date or required payment count if the lock expires.
 	if ( ! empty( $matched_lock['payments_required'] ) ) {
-		$payments_made = pmprolml_count_successful_payments_for_user( $current_user->ID, $matched_lock['level_id'] );
 		$message = sprintf(
-			/* translators: 1: number of successful payments required to unlock, 2: number of successful payments made so far. */
-			esc_html__( 'This membership is locked until %1$d successful payments have been made (%2$d so far) and cannot be changed.', 'pmpro-lock-membership-level' ),
-			(int) $matched_lock['payments_required'],
-			(int) $payments_made
+			/* translators: %d: number of successful payments required to unlock. */
+			esc_html__( 'This membership is locked until %d successful payments have been made.', 'pmpro-lock-membership-level' ),
+			(int) $matched_lock['payments_required']
 		);
 	} elseif ( ! empty( $matched_lock['expiration'] ) ) {
 		$message = sprintf(
 			/* translators: %s: the date the lock expires. */
-			esc_html__( 'This membership is locked until %s and cannot be changed.', 'pmpro-lock-membership-level' ),
+			esc_html__( 'This membership is locked until %s.', 'pmpro-lock-membership-level' ),
 			esc_html( date_i18n( get_option( 'date_format' ), (int) $matched_lock['expiration'] ) )
 		);
 	} else {

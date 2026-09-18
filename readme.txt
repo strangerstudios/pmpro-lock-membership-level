@@ -48,6 +48,13 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= TBD =
+* BUG FIX: Payment-based locks are no longer deleted once the required number of payments is reached. The requirement is now checked each time locks are read, so deleting or refunding a counted order locks the membership again.
+* BUG FIX: Payment-based locks now only count payments dated on or after the start of the current membership (plus the checkout payment itself). Payments from an earlier period on the same level no longer count toward unlocking.
+* BUG FIX: Orders with a total of zero are no longer counted as successful payments.
+* ENHANCEMENT: The Locked Memberships panel on the Edit Member page now shows an "Unlocked" tag on payment-based locks whose requirement has been met.
+* ENHANCEMENT: Reworked the "Unlock When?" fields on the Edit Membership Level page to match the layout of the other level settings.
+
 = 1.1 - 2026-09-16 =
 * FEATURE: Membership levels can now be set to unlock after a specified number of successful payments have been made, as an alternative to unlocking after a fixed time period. #32 (@flintfromthebasement)
 

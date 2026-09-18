@@ -19,8 +19,8 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 		// Get all levels for this user.
 		$user_levels = pmpro_getMembershipLevelsForUser( $user->ID );
 
-		// Get all locks for this user.
-		$locks = pmprolml_get_locks_for_user( $user->ID );
+		// Get all locks for this user, including payment-based locks that are currently satisfied.
+		$locks = pmprolml_get_all_locks_for_user( $user->ID );
 
 		// Are any locks for all levels?
 		$all_levels_locked = false;
@@ -77,13 +77,20 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 									<?php
 									if ( ! empty( $lock['payments_required'] ) ) {
 										// This lock unlocks after a number of successful payments have been made.
-										$payments_made = pmprolml_count_successful_payments_for_user( $user->ID, $lock['level_id'] );
+										$payments_made = pmprolml_count_successful_payments_for_user( $user->ID, $lock['level_id'], $lock );
 										printf(
 											/* translators: 1: number of successful payments made so far, 2: number of successful payments required to unlock. */
 											esc_html__( 'After %2$d successful payment(s) (%1$d so far)', 'pmpro-lock-membership-level' ),
 											(int) $payments_made,
 											(int) $lock['payments_required']
 										);
+										if ( pmprolml_is_lock_satisfied_by_payments( $user->ID, $lock ) ) {
+											?>
+											<span class="pmpro_tag pmpro_tag-has_icon pmpro_tag-success">
+												<?php esc_html_e( 'Unlocked', 'pmpro-lock-membership-level' ); ?>
+											</span>
+											<?php
+										}
 									} else {
 										// Get expiration in local time.
 										$expiration = empty( $lock['expiration'] ) ? __( 'Never', 'pmpro-lock-membership-level' ) : get_date_from_gmt( date( 'Y-m-d H:i:s', $lock['expiration'] ), get_option( 'date_format' ) ) . ' at ' . get_date_from_gmt( date( 'Y-m-d H:i:s', $lock['expiration'] ), get_option( 'time_format' ) );
