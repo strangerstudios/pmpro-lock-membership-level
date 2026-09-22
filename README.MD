@@ -1,9 +1,8 @@
 ![](pmpro-lock-membership-level-banner.png)
 
-# [Paid Memberships Pro - Lock Membership Level](https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level) #
-[comment]: # (Generate badges from shields.io, only works for .org plugins to get other stats etc. We'd have to create our own endpoints for Premium plugins)
+# [Paid Memberships Pro - Lock Membership Level](https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level)
 
-![License](https://img.shields.io/badge/license-GPL--3.0%2B-red.svg?style=flat-square)
+![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg?style=flat-square)
 
 ### Welcome to the Paid Memberships Pro - Lock Membership Level GitHub Repository
 Lock membership level changes for specific users or by level.
