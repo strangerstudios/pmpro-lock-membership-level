@@ -1,4 +1,8 @@
 <?php
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Get all lock records for a user, including payment-based locks whose payment
@@ -231,10 +235,11 @@ function pmprolml_count_successful_payments_for_user( $user_id, $level_id, $lock
 	// Locks saved before this data was stored count all payments, as they always did.
 	if ( is_array( $lock ) && ! empty( $lock['created'] ) ) {
 		// Both membership start dates and order timestamps are stored in UTC.
+		// Direct queries against PMPro's custom tables; there is no core API or cache for these.
 		if ( ! empty( $level_id ) ) {
-			$startdate = $wpdb->get_var( $wpdb->prepare( "SELECT MIN(startdate) FROM $wpdb->pmpro_memberships_users WHERE user_id = %d AND membership_id = %d AND status = 'active'", $user_id, $level_id ) );
+			$startdate = $wpdb->get_var( $wpdb->prepare( "SELECT MIN(startdate) FROM $wpdb->pmpro_memberships_users WHERE user_id = %d AND membership_id = %d AND status = 'active'", $user_id, $level_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		} else {
-			$startdate = $wpdb->get_var( $wpdb->prepare( "SELECT MIN(startdate) FROM $wpdb->pmpro_memberships_users WHERE user_id = %d AND status = 'active'", $user_id ) );
+			$startdate = $wpdb->get_var( $wpdb->prepare( "SELECT MIN(startdate) FROM $wpdb->pmpro_memberships_users WHERE user_id = %d AND status = 'active'", $user_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		}
 
 		// Fall back to the lock creation time if there is no active membership to compare against.
@@ -255,8 +260,9 @@ function pmprolml_count_successful_payments_for_user( $user_id, $level_id, $lock
 		}
 	}
 
+	// $where only contains static strings and %d/%s placeholders; all user values are passed to prepare().
 	$sql = "SELECT COUNT(*) FROM $wpdb->pmpro_membership_orders WHERE " . implode( ' AND ', $where );
-	$count = $wpdb->get_var( $wpdb->prepare( $sql, $values ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+	$count = $wpdb->get_var( $wpdb->prepare( $sql, $values ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 	return (int)$count;
 }

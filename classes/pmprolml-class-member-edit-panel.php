@@ -93,7 +93,7 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 										}
 									} else {
 										// Get expiration in local time.
-										$expiration = empty( $lock['expiration'] ) ? __( 'Never', 'pmpro-lock-membership-level' ) : get_date_from_gmt( date( 'Y-m-d H:i:s', $lock['expiration'] ), get_option( 'date_format' ) ) . ' at ' . get_date_from_gmt( date( 'Y-m-d H:i:s', $lock['expiration'] ), get_option( 'time_format' ) );
+										$expiration = empty( $lock['expiration'] ) ? __( 'Never', 'pmpro-lock-membership-level' ) : get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $lock['expiration'] ), get_option( 'date_format' ) ) . ' at ' . get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $lock['expiration'] ), get_option( 'time_format' ) );
 										echo esc_html( $expiration );
 									}
 									?>
@@ -140,7 +140,7 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 										<option value="1"><?php esc_html_e( 'Specific Date', 'pmpro-lock-membership-level' ); ?></option>
 										<option value="2"><?php esc_html_e( 'After a Number of Successful Payments', 'pmpro-lock-membership-level' ); ?></option>
 									</select>
-									<input type="datetime-local" name="pmprolml_expiration_date" style="display: none;" value="<?php echo esc_attr( date( 'Y-m-d H:i', strtotime( '+1 year', current_time( 'timestamp' ) ) ) ); ?>"/>
+									<input type="datetime-local" name="pmprolml_expiration_date" style="display: none;" value="<?php echo esc_attr( gmdate( 'Y-m-d H:i', strtotime( '+1 year', current_time( 'timestamp' ) ) ) ); ?>"/>
 									<span class="pmprolml_expiration_payments_fields" style="display: none;">
 										<input type="number" name="pmprolml_expiration_payments_count" min="1" step="1" class="small-text" value="1" />
 										<p class="description"><?php esc_html_e( 'The lock is removed once the member has made this many successful payments for this level. Only payments made during the current membership are counted.', 'pmpro-lock-membership-level' ); ?></p>
@@ -203,6 +203,9 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 	 * Process the form submission.
 	 */
 	public function save() {
+		// PMPro core verifies the Edit Member nonce before calling save() on a panel.
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+
 		// Check for deletes.
 		if ( ! empty( $_POST ) ) {
 			foreach ( $_POST as $key => $value ) {
@@ -215,18 +218,20 @@ class PMProlml_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 
 		// Check for adds/updates.
 		if ( ! empty( $_POST['pmprolml_add_lock'] ) ) {
-			$level_id = (int)$_POST['pmprolml_level_id'];
-			$expiration_type = (int)$_POST['pmprolml_expiration'];
+			$level_id = isset( $_POST['pmprolml_level_id'] ) ? (int)$_POST['pmprolml_level_id'] : 0;
+			$expiration_type = isset( $_POST['pmprolml_expiration'] ) ? (int)$_POST['pmprolml_expiration'] : 0;
 			$expiration = 0;
 			$payments_required = 0;
 			if ( 1 === $expiration_type ) {
 				// Lock expires on a specific date.
-				$expiration = strtotime( get_gmt_from_date( sanitize_text_field( $_POST['pmprolml_expiration_date'] ) ) );
+				$expiration_date = isset( $_POST['pmprolml_expiration_date'] ) ? sanitize_text_field( wp_unslash( $_POST['pmprolml_expiration_date'] ) ) : '';
+				$expiration      = empty( $expiration_date ) ? 0 : (int) strtotime( get_gmt_from_date( $expiration_date ) );
 			} elseif ( 2 === $expiration_type ) {
 				// Lock expires after a number of successful payments.
 				$payments_required = isset( $_POST['pmprolml_expiration_payments_count'] ) ? max( 1, (int)$_POST['pmprolml_expiration_payments_count'] ) : 1;
 			}
 			pmprolml_add_lock_for_user( self::get_user()->ID, $level_id, $expiration, $payments_required );
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 }

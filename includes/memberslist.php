@@ -1,4 +1,8 @@
 <?php
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Add columns to Members List.
@@ -51,18 +55,21 @@ add_action( 'admin_init', 'pmprolml_hook_pmprolml_manage_memberslist_custom_colu
  *	Insert "Locked" option into Members List dropdown via JS.
  */
 function pmprolml_admin_footer_js() {
-	if(!empty($_REQUEST['page']) && $_REQUEST['page'] == 'pmpro-memberslist') {
+	// Read-only list filter parameters; nothing is processed or saved.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended
+	if ( ! empty( $_REQUEST['page'] ) && 'pmpro-memberslist' === sanitize_text_field( wp_unslash( $_REQUEST['page'] ) ) ) {
 		?>
 		<script>
 			jQuery(document).ready(function() {
 				jQuery('select[name=l]').append('<option value="locked"><?php esc_html_e( 'Locked', 'pmpro-lock-membership-level' ); ?></option>');
-				<?php if( !empty($_REQUEST['l']) && $_REQUEST['l'] == 'locked' ) { ?>
+				<?php if ( ! empty( $_REQUEST['l'] ) && 'locked' === sanitize_text_field( wp_unslash( $_REQUEST['l'] ) ) ) { ?>
 					jQuery('select[name=l]').val('locked');
 				<?php } ?>
 			});
 		</script>
 		<?php
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 }
 add_action('admin_footer', 'pmprolml_admin_footer_js', 99);
 
@@ -71,7 +78,7 @@ add_action('admin_footer', 'pmprolml_admin_footer_js', 99);
 */
 function pmprolml_pmpro_members_list_sql($sql) {
 	//only if the level param is passed in and set to locked
-	if(!empty($_REQUEST['l']) && $_REQUEST['l'] == 'locked') {
+	if ( ! empty( $_REQUEST['l'] ) && 'locked' === sanitize_text_field( wp_unslash( $_REQUEST['l'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list filter parameter.
 		global $wpdb;
 		
 		//tweak SQL to only show locked members
@@ -178,7 +185,7 @@ function pmprolml_extra_column_lockedmemberpayments($user) {
  * @return array
  */
 function pmprolml_add_action_links($links) {	
-	$cap = apply_filters('pmpro_add_member_cap', 'edit_users');	
+	$cap = apply_filters( 'pmpro_add_member_cap', 'edit_users' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- PMPro core hook.
 	if( current_user_can( $cap ) ) {
 		$new_links = array(
 			'<a href="' . get_admin_url(NULL, 'admin.php?page=pmpro-memberslist&l=locked') . '">' . esc_html__('View Locked Members', 'pmpro-lock-membership-level') . '</a>',

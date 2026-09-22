@@ -1,4 +1,8 @@
 <?php
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Add a page and assign it under Memberships > Page settings that will redirect locked members to 
@@ -11,7 +15,12 @@
  * @return array $pages Array of pages and their settings.
  */
 function pmprolml_extra_page_settings($pages) {
-	$pages['membership_locked'] = array('title'=> esc_html__('Membership Locked', 'pmpro-lock-membership-level'), 'content'=>'[pmpro_membership_locked]', 'hint'=> sprintf( esc_html__('Include the shortcode %s.', 'pmpro-lock-membership-level'), '[pmpro_membership_locked]' ) );
+	$pages['membership_locked'] = array(
+		'title'   => esc_html__( 'Membership Locked', 'pmpro-lock-membership-level' ),
+		'content' => '[pmpro_membership_locked]',
+		/* translators: %s: the [pmpro_membership_locked] shortcode. */
+		'hint'    => sprintf( esc_html__( 'Include the shortcode %s.', 'pmpro-lock-membership-level' ), '[pmpro_membership_locked]' ),
+	);
 	return $pages;
 }
 add_action('pmpro_extra_page_settings', 'pmprolml_extra_page_settings');
@@ -41,7 +50,8 @@ function pmprolml_getLevelOptions($level_id) {
  * @param object $level The level object being edited.
  */
 function pmprolml_membership_level_before_content_settings( $level ) {
-	$level_id = intval($_REQUEST['edit']);
+	// Nonce is verified by PMPro core before rendering the edit level page.
+	$level_id = isset( $_REQUEST['edit'] ) ? intval( $_REQUEST['edit'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$options = pmprolml_getLevelOptions($level_id);
 
 	// Build the settings UI.
@@ -64,7 +74,11 @@ function pmprolml_membership_level_before_content_settings( $level ) {
 			<p>
 				<?php
 				$lock_membership_link = '<a title="' . esc_attr__( 'Lock Membership Level Add On Documentation', 'pmpro-lock-membership-level' ) . '" target="_blank" rel="nofollow noopener" href="https://www.paidmembershipspro.com/add-ons/pmpro-lock-membership-level/?utm_source=plugin&utm_medium=pmpro-lock-membership-level&utm_campaign=add-ons">' . esc_html__( 'Lock Membership Level Add On', 'pmpro-lock-membership-level' ) . '</a>';
-				printf( esc_html__( 'Learn more about the %s.', 'pmpro-lock-membership-level' ), $lock_membership_link ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				printf(
+					/* translators: %s: link to the Lock Membership Level Add On documentation. */
+					esc_html__( 'Learn more about the %s.', 'pmpro-lock-membership-level' ),
+					$lock_membership_link // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
+				);
 				?>
 			</p>
 			<style>
@@ -154,17 +168,20 @@ add_action( 'pmpro_membership_level_before_content_settings', 'pmprolml_membersh
  * @param int $level_id The ID of the membership level.
  */
 function pmprolml_pmpro_save_membership_level($level_id) {
+	// Nonce is verified by PMPro core before the pmpro_save_membership_level action fires.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended
+
 	//get values
 	$lml_lock = isset( $_REQUEST['lml_lock'] ) ? true : false;
 	
 	if(!empty($lml_lock) && isset($_REQUEST['lml_expiration'])) {
-		$lml_expiration = sanitize_text_field($_REQUEST['lml_expiration']);
+		$lml_expiration = sanitize_text_field( wp_unslash( $_REQUEST['lml_expiration'] ) );
 		if(!in_array($lml_expiration, array('period', 'payments')))
 			$lml_expiration = '';
 
-		$lml_expiration_number = intval($_REQUEST['lml_expiration_number']);
+		$lml_expiration_number = isset( $_REQUEST['lml_expiration_number'] ) ? intval( $_REQUEST['lml_expiration_number'] ) : 0;
 
-		$lml_expiration_period = sanitize_text_field($_REQUEST['lml_expiration_period']);
+		$lml_expiration_period = isset( $_REQUEST['lml_expiration_period'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['lml_expiration_period'] ) ) : '';
 		if(!in_array($lml_expiration_period, array('Day', 'Week', 'Month', 'Year')))
 			$lml_expiration_period = '';
 
@@ -180,6 +197,7 @@ function pmprolml_pmpro_save_membership_level($level_id) {
 		$lml_expiration_period = '';
 		$lml_expiration_payments_count = '';
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 	//build array
 	$options = array(

@@ -1,4 +1,8 @@
 <?php
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /*
  * Add "Lock Membership" field in the profile for PMPro v2.x.
@@ -13,7 +17,7 @@ function pmprolml_show_extra_profile_fields($user) {
 
 	wp_get_current_user();
 
-	$membership_level_capability = apply_filters("pmpro_edit_member_capability", "manage_options");
+	$membership_level_capability = apply_filters( 'pmpro_edit_member_capability', 'manage_options' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- PMPro core hook.
 
 	if(!current_user_can($membership_level_capability))
 		return false;
@@ -31,20 +35,20 @@ function pmprolml_show_extra_profile_fields($user) {
 	$lml_expiration = ( empty( $all_lock ) || empty( $all_lock['expiration'] ) ) ? '' : date_i18n( 'Y-m-d 12:00:00', $all_lock['expiration'] );
 		
 	//some vars for the dates
-	$current_day = date("j", current_time('timestamp'));			
+	$current_day = gmdate("j", current_time('timestamp'));			
 	if(!empty($lml_expiration))
-		$selected_expires_day = date("j", strtotime($lml_expiration, current_time('timestamp')));
+		$selected_expires_day = gmdate("j", strtotime($lml_expiration, current_time('timestamp')));
 	else
 		$selected_expires_day = $current_day;
 		
 	if(!empty($lml_expiration))
-		$selected_expires_month = date("m", strtotime($lml_expiration, current_time('timestamp')));
+		$selected_expires_month = gmdate("m", strtotime($lml_expiration, current_time('timestamp')));
 	else
-		$selected_expires_month = date("m", current_time('timestamp'));
+		$selected_expires_month = gmdate("m", current_time('timestamp'));
 		
-	$current_year = date("Y", current_time('timestamp'));									
+	$current_year = gmdate("Y", current_time('timestamp'));									
 	if(!empty($lml_expiration))
-		$selected_expires_year = date("Y", strtotime($lml_expiration, current_time('timestamp')));
+		$selected_expires_year = gmdate("Y", strtotime($lml_expiration, current_time('timestamp')));
 	else
 		$selected_expires_year = (int)$current_year + 1;
 	?>
@@ -73,13 +77,13 @@ function pmprolml_show_extra_profile_fields($user) {
 							for($i = 1; $i < 13; $i++)
 							{
 							?>
-							<option value="<?php echo $i?>" <?php if($i == $selected_expires_month) { ?>selected="selected"<?php } ?>><?php echo date("M", strtotime($i . "/15/" . $current_year, current_time("timestamp")))?></option>
+							<option value="<?php echo (int) $i; ?>" <?php selected( $i, $selected_expires_month ); ?>><?php echo esc_html( gmdate( 'M', strtotime( $i . '/15/' . $current_year, current_time( 'timestamp' ) ) ) ); ?></option>
 							<?php
 							}
 						?>
 					</select>
-					<input id="lml_expiration_day" name="lml_expiration_day" type="text" size="2" value="<?php echo $selected_expires_day?>" />
-					<input id="lml_expiration_year" name="lml_expiration_year" type="text" size="4" value="<?php echo $selected_expires_year?>" />
+					<input id="lml_expiration_day" name="lml_expiration_day" type="text" size="2" value="<?php echo esc_attr( $selected_expires_day ); ?>" />
+					<input id="lml_expiration_year" name="lml_expiration_year" type="text" size="4" value="<?php echo esc_attr( $selected_expires_year ); ?>" />
 				</span>
 			</td>
 		</tr>	
@@ -124,18 +128,29 @@ function pmprolml_save_extra_profile_fields( $user_id ) {
 
 	// Use the same capability as the field display. edit_user passes for users
 	// editing their own profile, which would let members remove their own lock.
-	$membership_level_capability = apply_filters( 'pmpro_edit_member_capability', 'manage_options' );
+	$membership_level_capability = apply_filters( 'pmpro_edit_member_capability', 'manage_options' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- PMPro core hook.
 	if ( ! current_user_can( $membership_level_capability ) )
 		return false;
 
+	// WordPress core verifies the update-user nonce before these profile update hooks fire.
+	// phpcs:disable WordPress.Security.NonceVerification.Missing
 	if ( empty( $_POST['pmprolml'] ) ) {
 		// Delete the "all" lock for the user.
 		pmprolml_delete_lock_for_user( $user_id, 0 );
 	} else {
 		// Update the "all" lock for the user.
-		$expiration = empty( $_POST['lml_expiration'] ) ? 0 : strtotime( $_POST['lml_expiration_year'] . '-' . $_POST['lml_expiration_month'] . '-' . $_POST['lml_expiration_day'] . ' 12:00:00' );
+		$expiration = 0;
+		if ( ! empty( $_POST['lml_expiration'] ) ) {
+			$year  = isset( $_POST['lml_expiration_year'] ) ? intval( $_POST['lml_expiration_year'] ) : 0;
+			$month = isset( $_POST['lml_expiration_month'] ) ? intval( $_POST['lml_expiration_month'] ) : 0;
+			$day   = isset( $_POST['lml_expiration_day'] ) ? intval( $_POST['lml_expiration_day'] ) : 0;
+			if ( $year > 0 && $month > 0 && $day > 0 ) {
+				$expiration = (int) strtotime( $year . '-' . $month . '-' . $day . ' 12:00:00' );
+			}
+		}
 		pmprolml_add_lock_for_user( $user_id, 0, $expiration );
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
 }
 add_action( 'personal_options_update', 'pmprolml_save_extra_profile_fields' );
 add_action( 'edit_user_profile_update', 'pmprolml_save_extra_profile_fields' );
