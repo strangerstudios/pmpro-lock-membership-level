@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Paid Memberships Pro - Lock Membership Level plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Lock Membership Level 1.0.2\n"
+"Project-Id-Version: Paid Memberships Pro - Lock Membership Level 1.1\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-01T17:54:47+00:00\n"
+"POT-Creation-Date: 2026-09-22T09:50:22+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-lock-membership-level\n"
@@ -57,6 +57,7 @@ msgstr ""
 
 #: pmpro-lock-membership-level.php:100
 #: includes/deprecated.php:54
+#: includes/import.php:14
 msgid "Lock Membership Level"
 msgstr ""
 
@@ -70,6 +71,7 @@ msgstr ""
 #: includes/admin-settings.php:66
 #: includes/deprecated.php:63
 #: includes/admin-settings.php:72
+#: includes/admin-settings.php:85
 msgid "Unlock When?"
 msgstr ""
 
@@ -81,6 +83,9 @@ msgstr ""
 #: includes/deprecated.php:66
 #: classes/pmprolml-class-member-edit-panel.php:121
 #: includes/admin-settings.php:75
+#: classes/pmprolml-class-member-edit-panel.php:96
+#: classes/pmprolml-class-member-edit-panel.php:139
+#: includes/admin-settings.php:88
 msgid "Never"
 msgstr ""
 
@@ -88,6 +93,7 @@ msgstr ""
 #: classes/pmprolml-class-member-edit-panel.php:121
 #: includes/deprecated.php:67
 #: classes/pmprolml-class-member-edit-panel.php:122
+#: classes/pmprolml-class-member-edit-panel.php:140
 msgid "Specific Date"
 msgstr ""
 
@@ -97,6 +103,7 @@ msgstr ""
 
 #: pmpro-lock-membership-level.php:236
 #: includes/frontend.php:187
+#: includes/frontend.php:285
 msgid "Return to Your Account"
 msgstr ""
 
@@ -119,11 +126,14 @@ msgstr ""
 
 #: pmpro-lock-membership-level.php:278
 #: includes/memberslist.php:53
+#: includes/memberslist.php:30
+#: includes/memberslist.php:58
 msgid "Locked"
 msgstr ""
 
 #: pmpro-lock-membership-level.php:339
 #: includes/admin-settings.php:53
+#: includes/admin-settings.php:60
 msgid "Lock Membership Level Settings"
 msgstr ""
 
@@ -134,71 +144,83 @@ msgstr ""
 #: pmpro-lock-membership-level.php:344
 #: includes/admin-settings.php:60
 #: includes/admin-settings.php:66
+#: includes/admin-settings.php:79
 msgid "Lock This Level?"
 msgstr ""
 
 #: pmpro-lock-membership-level.php:346
 #: includes/admin-settings.php:62
 #: includes/admin-settings.php:68
+#: includes/admin-settings.php:81
 msgid "Check to lock users from cancelling or changing levels after they get this level."
 msgstr ""
 
 #: pmpro-lock-membership-level.php:354
 #: includes/admin-settings.php:70
 #: includes/admin-settings.php:76
+#: includes/admin-settings.php:99
 msgid "Time Period"
 msgstr ""
 
 #: pmpro-lock-membership-level.php:360
 #: includes/admin-settings.php:77
 #: includes/admin-settings.php:83
+#: includes/admin-settings.php:103
 msgid "Day(s)"
 msgstr ""
 
 #: pmpro-lock-membership-level.php:361
 #: includes/admin-settings.php:78
 #: includes/admin-settings.php:84
+#: includes/admin-settings.php:104
 msgid "Week(s)"
 msgstr ""
 
 #: pmpro-lock-membership-level.php:362
 #: includes/admin-settings.php:79
 #: includes/admin-settings.php:85
+#: includes/admin-settings.php:105
 msgid "Month(s)"
 msgstr ""
 
 #: pmpro-lock-membership-level.php:363
 #: includes/admin-settings.php:80
 #: includes/admin-settings.php:86
+#: includes/admin-settings.php:106
 msgid "Year(s)"
 msgstr ""
 
 #: pmpro-lock-membership-level.php:529
 #: includes/memberslist.php:122
+#: includes/memberslist.php:184
 msgid "View Locked Members"
 msgstr ""
 
 #: pmpro-lock-membership-level.php:544
 #: pmpro-lock-membership-level.php:554
 #: pmpro-lock-membership-level.php:36
+#: pmpro-lock-membership-level.php:37
 msgid "View Documentation"
 msgstr ""
 
 #: pmpro-lock-membership-level.php:544
 #: pmpro-lock-membership-level.php:554
 #: pmpro-lock-membership-level.php:36
+#: pmpro-lock-membership-level.php:37
 msgid "Docs"
 msgstr ""
 
 #: pmpro-lock-membership-level.php:545
 #: pmpro-lock-membership-level.php:555
 #: pmpro-lock-membership-level.php:37
+#: pmpro-lock-membership-level.php:38
 msgid "Visit Customer Support Forum"
 msgstr ""
 
 #: pmpro-lock-membership-level.php:545
 #: pmpro-lock-membership-level.php:555
 #: pmpro-lock-membership-level.php:37
+#: pmpro-lock-membership-level.php:38
 msgid "Support"
 msgstr ""
 
@@ -213,6 +235,7 @@ msgstr ""
 #: classes/pmprolml-class-member-edit-panel.php:40
 #: classes/pmprolml-class-member-edit-panel.php:116
 #: classes/pmprolml-class-member-edit-panel.php:117
+#: classes/pmprolml-class-member-edit-panel.php:135
 msgid "Lock Expiration"
 msgstr ""
 
@@ -233,22 +256,27 @@ msgid "Membership Ended"
 msgstr ""
 
 #: classes/pmprolml-class-member-edit-panel.php:83
+#: classes/pmprolml-class-member-edit-panel.php:101
 msgid "Delete"
 msgstr ""
 
 #: classes/pmprolml-class-member-edit-panel.php:93
+#: classes/pmprolml-class-member-edit-panel.php:111
 msgid "Add a Membership Lock"
 msgstr ""
 
 #: classes/pmprolml-class-member-edit-panel.php:94
+#: classes/pmprolml-class-member-edit-panel.php:112
 msgid "Use the form below to add a new locked membership or update an existing locked membership for this user."
 msgstr ""
 
 #: classes/pmprolml-class-member-edit-panel.php:98
+#: classes/pmprolml-class-member-edit-panel.php:116
 msgid "Membership Level"
 msgstr ""
 
 #: classes/pmprolml-class-member-edit-panel.php:102
+#: classes/pmprolml-class-member-edit-panel.php:120
 msgid "All Levels"
 msgstr ""
 
@@ -256,36 +284,124 @@ msgstr ""
 #: classes/pmprolml-class-member-edit-panel.php:137
 #: classes/pmprolml-class-member-edit-panel.php:128
 #: classes/pmprolml-class-member-edit-panel.php:138
+#: classes/pmprolml-class-member-edit-panel.php:151
+#: classes/pmprolml-class-member-edit-panel.php:161
 msgid "Add/Update Lock"
 msgstr ""
 
 #: classes/pmprolml-class-member-edit-panel.php:128
 #: classes/pmprolml-class-member-edit-panel.php:129
+#: classes/pmprolml-class-member-edit-panel.php:152
 msgid "Close"
 msgstr ""
 
 #: includes/frontend.php:178
+#: includes/frontend.php:276
 #, php-format
 msgid "Your %s membership level is locked. You are not allowed to change that membership level."
 msgstr ""
 
 #: includes/frontend.php:180
+#: includes/frontend.php:278
 msgid "Your membership levels are locked. You are not allowed to change your membership levels."
 msgstr ""
 
 #: classes/pmprolml-class-member-edit-panel.php:112
+#: classes/pmprolml-class-member-edit-panel.php:130
 msgid "Select \"All Levels\" to prevent any membership changes for this user, or select a specific level to lock only that membership."
 msgstr ""
 
 #: includes/admin-settings.php:59
+#: includes/admin-settings.php:66
 msgid "Lock Membership Level Add On Documentation"
 msgstr ""
 
 #: includes/admin-settings.php:59
+#: includes/admin-settings.php:66
 msgid "Lock Membership Level Add On"
 msgstr ""
 
 #: includes/admin-settings.php:60
+#: includes/admin-settings.php:67
 #, php-format
 msgid "Learn more about the %s."
+msgstr ""
+
+#. translators: 1: number of successful payments made so far, 2: number of successful payments required to unlock.
+#: classes/pmprolml-class-member-edit-panel.php:83
+#, php-format
+msgid "After %2$d successful payment(s) (%1$d/%2$d successful payments)"
+msgstr ""
+
+#: classes/pmprolml-class-member-edit-panel.php:90
+msgid "Unlocked"
+msgstr ""
+
+#: classes/pmprolml-class-member-edit-panel.php:141
+#: includes/admin-settings.php:90
+msgid "After a Number of Successful Payments"
+msgstr ""
+
+#: classes/pmprolml-class-member-edit-panel.php:146
+msgid "The lock is removed once the member has made this many successful payments for this level. Only payments made during the current membership are counted."
+msgstr ""
+
+#: includes/admin-settings.php:89
+msgid "After a Time Period"
+msgstr ""
+
+#: includes/admin-settings.php:92
+msgid "Choose when members of this level should be allowed to cancel or change levels again."
+msgstr ""
+
+#: includes/admin-settings.php:96
+msgid "Unlock After"
+msgstr ""
+
+#: includes/admin-settings.php:115
+msgid "The lock is removed once this much time has passed since the member received this level."
+msgstr ""
+
+#: includes/admin-settings.php:119
+msgid "Successful Payments Required"
+msgstr ""
+
+#: includes/admin-settings.php:122
+msgid "The lock is removed once the member has made this many successful payments for this level, including the initial payment."
+msgstr ""
+
+#: includes/frontend.php:169
+msgid "This membership is locked and cannot be cancelled. Please contact the site administrator for assistance."
+msgstr ""
+
+#: includes/frontend.php:230
+msgid "This membership is locked and cannot be changed. Please contact the site administrator for assistance."
+msgstr ""
+
+#. translators: %d: number of successful payments required to unlock.
+#: includes/frontend.php:360
+#, php-format
+msgid "This membership is locked until %d successful payments have been made."
+msgstr ""
+
+#. translators: %s: the date the lock expires.
+#: includes/frontend.php:366
+#, php-format
+msgid "This membership is locked until %s."
+msgstr ""
+
+#: includes/frontend.php:370
+msgid "This membership is locked and cannot be changed."
+msgstr ""
+
+#: includes/import.php:16
+msgid "Locked Member"
+msgstr ""
+
+#: includes/import.php:17
+msgid "Locked Member Expiration"
+msgstr ""
+
+#: includes/import.php:18
+msgid "Locked Member Payments Required"
 msgstr ""
