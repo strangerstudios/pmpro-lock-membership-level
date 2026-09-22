@@ -1,4 +1,8 @@
 <?php
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Register mapping fields so locked member data can be assigned to a CSV

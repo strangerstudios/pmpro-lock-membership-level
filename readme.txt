@@ -1,9 +1,11 @@
 === Paid Memberships Pro - Lock Membership Level Add On ===
 Contributors: strangerstudios
-Tags: paid memberships pro, pmpro, restrict, lock, block, admin
+Tags: paid memberships pro, pmpro, restrict, lock, membership
 Requires at least: 4.0
-Tested up to: 6.9
+Tested up to: 7.1
 Stable tag: 1.1
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Lock membership level changes for specific users or by level.
 
