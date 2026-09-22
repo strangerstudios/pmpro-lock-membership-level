@@ -8,7 +8,14 @@ Author: Paid Memberships Pro
 Author URI: https://www.paidmembershipspro.com
 Text Domain: pmpro-lock-membership-level
 Domain Path: /languages
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 require_once( plugin_dir_path( __FILE__ ) . 'includes/lock-functions.php' );   // Functions to lock/unlock membership levels for a user.
 require_once( plugin_dir_path( __FILE__ ) . 'includes/frontend.php' );       // Enforce locks on the frontend.

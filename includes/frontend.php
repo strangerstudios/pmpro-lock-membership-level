@@ -1,4 +1,8 @@
 <?php
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /*
  * Redirect away from the membership locked page if user isn't locked and
@@ -6,6 +10,9 @@
  */
 function pmprolml_template_redirect() {
 	global $pmpro_pages, $current_user;
+
+	// Request parameters below are only read to decide on a redirect; no data is processed or saved.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended
 	
 	if( empty( $pmpro_pages ) || empty( $current_user->ID ) ) {
 		return;
@@ -14,10 +21,10 @@ function pmprolml_template_redirect() {
 	// Redirect away from the membership locked page if user isn't locked.
 	if( ! empty( $pmpro_pages['membership_locked'] ) && is_page( $pmpro_pages['membership_locked'] ) && ! pmprolml_is_level_locked_for_user( $current_user->ID, empty( $_REQUEST['pmprolml_locked_level'] ) ? 0 : (int)$_REQUEST['pmprolml_locked_level'] ) ) {
 		if( ! empty( $pmpro_pages['account'] ) ) {
-			wp_redirect( pmpro_url( 'account' ) );
+			wp_safe_redirect( pmpro_url( 'account' ) );
 			exit;
 		} else {
-			wp_redirect( home_url() );
+			wp_safe_redirect( home_url() );
 			exit;
 		}
 	}
@@ -37,11 +44,12 @@ function pmprolml_template_redirect() {
 			$levels_to_check = array();
 			$user_levels     = pmpro_getMembershipLevelsForUser( $current_user->ID );
 			$user_level_ids  = array_map( 'intval', wp_list_pluck( $user_levels, 'ID' ) );
-			if ( ! empty( $_REQUEST['levelstocancel'] ) && $_REQUEST['levelstocancel'] === 'all' ) {
+			$levels_to_cancel = empty( $_REQUEST['levelstocancel'] ) ? '' : sanitize_text_field( wp_unslash( $_REQUEST['levelstocancel'] ) );
+			if ( 'all' === $levels_to_cancel ) {
 				$levels_to_check = $user_level_ids;
-			} elseif ( ! empty( $_REQUEST['levelstocancel'] ) ) {		
+			} elseif ( ! empty( $levels_to_cancel ) ) {
 				// A single ID could be passed, or a few like 1+2+3.
-				$requested_ids = array_map( 'intval', explode( '+', $_REQUEST['levelstocancel'] ) );
+				$requested_ids = array_map( 'intval', explode( '+', $levels_to_cancel ) );
 				$levels_to_check = array_intersect( $requested_ids, $user_level_ids );
 			}
 
@@ -109,10 +117,10 @@ function pmprolml_template_redirect() {
 	// Redirect to the membership locked page if the user is trying to change a locked level.
 	if( null !== $locked_level ) {
 		if ( ! empty( $pmpro_pages['membership_locked'] ) ) {
-			wp_redirect( add_query_arg( 'pmprolml_locked_level', (int)$locked_level, pmpro_url( 'membership_locked' ) ) );
+			wp_safe_redirect( add_query_arg( 'pmprolml_locked_level', (int)$locked_level, pmpro_url( 'membership_locked' ) ) );
 			exit;
 		} elseif ( ! empty( $pmpro_pages['account'] ) ) {
-			wp_redirect(
+			wp_safe_redirect(
 				add_query_arg(
 					array(
 						'pmprolml_redirect'     => '1',
@@ -123,10 +131,11 @@ function pmprolml_template_redirect() {
 			);
 			exit;
 		} else {
-			wp_redirect( home_url() );
+			wp_safe_redirect( home_url() );
 			exit;
 		}
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 }
 add_action('template_redirect', 'pmprolml_template_redirect');
 
@@ -149,11 +158,15 @@ function pmprolml_cancel_should_process( $process, $user ) {
 	}
 
 	// Figure out which levels are being cancelled (mirrors preheaders/cancel.php parsing).
-	$user_level_ids = array_map( 'intval', wp_list_pluck( pmpro_getMembershipLevelsForUser( $user->ID ), 'ID' ) );
-	if ( ! empty( $_REQUEST['levelstocancel'] ) && 'all' === $_REQUEST['levelstocancel'] ) {
+	// PMPro core has already verified the cancel nonce before this filter runs; the
+	// parameters are only read here to decide whether to block the cancellation.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended
+	$user_level_ids   = array_map( 'intval', wp_list_pluck( pmpro_getMembershipLevelsForUser( $user->ID ), 'ID' ) );
+	$levels_to_cancel = empty( $_REQUEST['levelstocancel'] ) ? '' : sanitize_text_field( wp_unslash( $_REQUEST['levelstocancel'] ) );
+	if ( 'all' === $levels_to_cancel ) {
 		$levels_to_check = $user_level_ids;
-	} elseif ( ! empty( $_REQUEST['levelstocancel'] ) ) {
-		$requested_ids   = array_map( 'intval', explode( '+', sanitize_text_field( $_REQUEST['levelstocancel'] ) ) );
+	} elseif ( ! empty( $levels_to_cancel ) ) {
+		$requested_ids   = array_map( 'intval', explode( '+', $levels_to_cancel ) );
 		$levels_to_check = array_intersect( $requested_ids, $user_level_ids );
 	} elseif ( ! empty( $_REQUEST['level'] ) ) {
 		// Legacy ?level param.
@@ -162,10 +175,11 @@ function pmprolml_cancel_should_process( $process, $user ) {
 		// No levels requested means cancelling all levels.
 		$levels_to_check = $user_level_ids;
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 	foreach ( $levels_to_check as $level_id ) {
 		if ( pmprolml_is_level_locked_for_user( $user->ID, $level_id ) ) {
-			global $pmpro_error;
+			global $pmpro_error; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PMPro core global.
 			$pmpro_error = __( 'This membership is locked and cannot be cancelled. Please contact the site administrator for assistance.', 'pmpro-lock-membership-level' );
 			return false;
 		}
@@ -260,7 +274,7 @@ add_filter( 'pmpro_member_action_links', 'pmprolml_hide_account_page_action_link
  * @param string|null $content       Shortcode contents.
  * @param string      $shortcode_tag Shortcode tag.
  */
-function pmpro_shortcode_membership_locked($atts, $content=null, $shortcode_tag="") {
+function pmpro_shortcode_membership_locked($atts, $content=null, $shortcode_tag="") { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Kept for backwards compatibility.
 	global $current_user;
 
 	extract(shortcode_atts(array(
@@ -270,10 +284,14 @@ function pmpro_shortcode_membership_locked($atts, $content=null, $shortcode_tag=
 
 	// Get the message.
 	if ( empty( $message ) ) {
-		$locked_level = empty( $_REQUEST['pmprolml_locked_level'] ) ? '' : intval( $_REQUEST['pmprolml_locked_level'] );
+		$locked_level = empty( $_REQUEST['pmprolml_locked_level'] ) ? '' : intval( $_REQUEST['pmprolml_locked_level'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display parameter.
 		if ( ! empty( $locked_level ) && ! empty( $current_user->ID ) && pmprolml_is_level_locked_for_user( $current_user->ID, $locked_level ) ) {
 			$level = pmpro_getLevel( $locked_level );
-			$message = sprintf( esc_html__( 'Your %s membership level is locked. You are not allowed to change that membership level.', 'pmpro-lock-membership-level' ), $level->name );
+			$message = sprintf(
+				/* translators: %s: the name of the locked membership level. */
+				esc_html__( 'Your %s membership level is locked. You are not allowed to change that membership level.', 'pmpro-lock-membership-level' ),
+				$level->name
+			);
 		} else {
 			$message = esc_html__( 'Your membership levels are locked. You are not allowed to change your membership levels.', 'pmpro-lock-membership-level' );
 		}
@@ -304,7 +322,7 @@ function pmprolml_show_account_page_error( $content ) {
 
 	$show_message = false;
 
-	if ( isset( $_REQUEST['pmprolml_redirect'] ) ) {
+	if ( isset( $_REQUEST['pmprolml_redirect'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display parameter.
 		// User has locked membership and was redirected here.
 		$show_message = true;
 	} elseif ( ! empty( $current_user->ID ) && pmprolml_is_level_locked_for_user( $current_user->ID, 0 ) && empty( pmpro_getMembershipLevelsForUser( $current_user->ID ) ) ) {
