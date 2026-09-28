@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, restrict, lock, membership
 Requires at least: 4.0
 Tested up to: 7.1
-Stable tag: 1.1
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +50,9 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 1.1.1 - 2026-09-28 =
+* BUG FIX: Disable hidden lock/unlock fields to fix silent save failure. #44 (@flintfromthebasement)
+
 = 1.1 - 2026-09-22 =
 * ENHANCEMENT: Added support for locking membership levels to a specific number of successful payments. #41 (@andrewlimaza)
 * ENHANCEMENT: Added support for importing and exporting compatibility with the Import Members From CSV Add On. #31 (@flintfromthebasement)
