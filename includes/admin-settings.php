@@ -142,9 +142,15 @@ function pmprolml_membership_level_before_content_settings( $level ) {
 				function toggleLMLOptions() {
 					var locked = jQuery('#lml_lock').is(':checked');
 					var expiration = jQuery('#lml_expiration').val();
-					jQuery('tr.lml_expiration').toggle(locked);
-					jQuery('tr.lml_expiration_period_fields').toggle(locked && expiration == 'period');
-					jQuery('tr.lml_expiration_payments_fields').toggle(locked && expiration == 'payments');
+					var showPeriod = locked && expiration == 'period';
+					var showPayments = locked && expiration == 'payments';
+
+					// Disable fields while their row is hidden so the browser excludes them from
+					// HTML5 constraint validation (an invalid field inside a hidden row can't be
+					// focused, which silently blocks form submission).
+					jQuery('tr.lml_expiration').toggle(locked).find(':input').prop('disabled', !locked);
+					jQuery('tr.lml_expiration_period_fields').toggle(showPeriod).find(':input').prop('disabled', !showPeriod);
+					jQuery('tr.lml_expiration_payments_fields').toggle(showPayments).find(':input').prop('disabled', !showPayments);
 				}
 
 				jQuery(document).ready(function(){
