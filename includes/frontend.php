@@ -31,11 +31,11 @@ function pmprolml_template_redirect() {
 
 	// Detect if a user is trying to change their level when they can't.
 	$locked_level = null;
-	if ( is_page( $pmpro_pages['levels'] ) && pmprolml_is_level_locked_for_user( $current_user->ID, 0 ) ) {
+	if ( ! empty( $pmpro_pages['levels'] ) && is_page( $pmpro_pages['levels'] ) && pmprolml_is_level_locked_for_user( $current_user->ID, 0 ) ) {
 		// The user has a lock on all levels. They cannot view the levels page.
 		$locked_level = 0;
 	}
-	if ( is_page( $pmpro_pages['cancel'] ) ) {
+	if ( ! empty( $pmpro_pages['cancel'] ) && is_page( $pmpro_pages['cancel'] ) ) {
 		// If the user has a lock on all levels, they cannot cancel any memberships.
 		if ( pmprolml_is_level_locked_for_user( $current_user->ID, 0 ) ) {
 			$locked_level = 0;
