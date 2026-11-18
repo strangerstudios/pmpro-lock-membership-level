@@ -146,7 +146,7 @@ add_action('template_redirect', 'pmprolml_template_redirect');
  * processes cancellations on the 'wp' hook, which runs before template_redirect,
  * so the redirect alone cannot stop a locked cancellation.
  *
- * @since TBD
+ * @since 1.1
  *
  * @param bool    $process Whether the cancellation should be processed.
  * @param WP_User $user    The user cancelling.
@@ -195,7 +195,7 @@ add_filter( 'pmpro_cancel_should_process', 'pmprolml_cancel_should_process', 10,
  * Same hook-ordering issue as cancellations: core processes checkouts on the 'wp'
  * hook, before the template_redirect guard can run.
  *
- * @since TBD
+ * @since 1.1
  *
  * @param bool $continue Whether the checkout should continue.
  * @return bool
@@ -342,7 +342,7 @@ add_filter( 'the_content', 'pmprolml_show_account_page_error' );
 /**
  * Show a message on each locked level card on the Membership Account page.
  *
- * @since TBD
+ * @since 1.1
  *
  * @param object $level The membership level object for the card being displayed.
  */

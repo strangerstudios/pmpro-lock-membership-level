@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, restrict, lock, membership
 Requires at least: 4.0
 Tested up to: 7.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +50,9 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 1.1.2 - 2026-11-18 =
+* BUG FIX: Fixed an issue where members with a lock on all levels could be redirected from every page when the Levels or Cancel page setting was empty. #45 (@dparker1005)
+
 = 1.1.1 - 2026-09-28 =
 * BUG FIX: Disable hidden lock/unlock fields to fix silent save failure. #44 (@flintfromthebasement)
 

@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * active again. Payment-based locks are always kept so that they become active again
  * if a counted order is later deleted or refunded.
  *
- * @since TBD
+ * @since 1.1
  *
  * @param int $user_id The user ID to get locks for.
  * @return array An array of lock records for the user.
@@ -69,7 +69,7 @@ function pmprolml_get_all_locks_for_user( $user_id ) {
 /**
  * Check whether a payment-based lock has had its payment requirement met.
  *
- * @since TBD
+ * @since 1.1
  *
  * @param int   $user_id The user ID the lock belongs to.
  * @param array $lock    The lock record.
@@ -148,7 +148,7 @@ function pmprolml_is_level_locked_for_user( $user_id, $level_id ) {
  * order lets the lock count the checkout payment even though the order was created
  * (and timestamped) before the lock.
  *
- * @since TBD
+ * @since 1.1
  *
  * @param MemberOrder $order The order that was added or updated.
  */
@@ -174,7 +174,7 @@ add_action( 'pmpro_updated_order', 'pmprolml_track_successful_order' );
 /**
  * Get the ID of the order that completed during this request for a user and level, if any.
  *
- * @since TBD
+ * @since 1.1
  *
  * @param int $user_id  The user ID.
  * @param int $level_id The level ID.
@@ -209,7 +209,7 @@ function pmprolml_get_checkout_order_id_for_lock( $user_id, $level_id ) {
  * any successful orders dated on or after the membership start date. Payments dated
  * before the membership started are not counted.
  *
- * @since TBD
+ * @since 1.1
  *
  * @param int        $user_id  The user ID to check.
  * @param int        $level_id The level ID to check, or 0 to count successful payments for all levels.

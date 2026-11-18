@@ -126,7 +126,7 @@ function pmprolml_extra_column_lockedmember($user) {
 /**
  * Get the active lock that applies to the membership level being exported for a user.
  *
- * @since TBD
+ * @since 1.1
  *
  * @param object $user The user object for the row with some additional membership data.
  * @return array|null The lock record, or null if the level is not locked.
@@ -163,7 +163,7 @@ function pmprolml_extra_column_lockedmemberexpiration($user) {
  *
  * The number of successful payments required to unlock, or blank if the lock is not payment-based.
  *
- * @since TBD
+ * @since 1.1
  *
  * @param object $user The user object for the row with some additional membership data.
  * @return string
