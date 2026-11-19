@@ -75,6 +75,12 @@ function pmprolml_pmproiucsv_after_member_import( $user, $membership_id, $order 
 		$expiration = (int)strtotime( get_gmt_from_date( $user->pmprolml_lockedmember_expiration ) );
 	}
 
+	// The import's level change queues pmpro_after_all_membership_level_changes, which would replace this lock
+	// with the level's own lock settings. Run it now so the imported lock is saved last and takes precedence.
+	if ( function_exists( 'pmpro_do_action_after_all_membership_level_changes' ) ) {
+		pmpro_do_action_after_all_membership_level_changes();
+	}
+
 	// If an order was created during this import, it has already been tracked as this lock's checkout order.
 	pmprolml_add_lock_for_user( $user->ID, (int)$membership_id, $expiration, $payments_required );
 }
