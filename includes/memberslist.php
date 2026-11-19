@@ -194,7 +194,7 @@ function pmprolml_add_action_links($links) {
 	}
 	return $links;
 }
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pmprolml_add_action_links');
+add_filter('plugin_action_links_' . plugin_basename( dirname( __DIR__ ) . '/pmpro-lock-membership-level.php' ), 'pmprolml_add_action_links');
 
 /**
  * Add a panel to the Edit Member dashboard page.
