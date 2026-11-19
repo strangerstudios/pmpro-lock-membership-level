@@ -73,26 +73,78 @@ function pmprolml_admin_footer_js() {
 }
 add_action('admin_footer', 'pmprolml_admin_footer_js', 99);
 
+/**
+ * Get the SQL condition that matches memberships that are currently locked.
+ *
+ * Used by the "Locked" option on the Members List and by the Members List export so that
+ * both show the same members as the "Locked?" column. Locks that have expired or have had
+ * their payment requirement met are left out.
+ *
+ * The query using this must alias the users table as `u` and the memberships users table as `mu`.
+ *
+ * @since TBD
+ *
+ * @return string The SQL condition, wrapped in parentheses.
+ */
+function pmprolml_get_locked_members_sql_condition() {
+	global $wpdb;
+	static $inactive_lock_ids = null;
+
+	// Whether a lock has expired or has had enough payments can't be worked out in SQL.
+	// Check the locks that can end here, once per request, and leave the ended ones out of the query by ID.
+	if ( null === $inactive_lock_ids ) {
+		$inactive_lock_ids = array();
+		$locks = $wpdb->get_results( "SELECT umeta_id, user_id, meta_value FROM $wpdb->usermeta WHERE meta_key = 'pmprolml_lock' AND ( meta_value NOT LIKE '%\"expiration\";i:0;%' OR ( meta_value LIKE '%\"payments_required\";%' AND meta_value NOT LIKE '%\"payments_required\";i:0;%' ) )" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Reads lock records for many users at once; cached for the request above.
+		foreach ( $locks as $lock_row ) {
+			$lock = maybe_unserialize( $lock_row->meta_value );
+			if ( ! is_array( $lock ) || ! isset( $lock['level_id'], $lock['expiration'] ) ) {
+				continue;
+			}
+
+			$expired = (int)$lock['expiration'] !== 0 && (int)$lock['expiration'] < time();
+			if ( $expired || pmprolml_is_lock_satisfied_by_payments( (int)$lock_row->user_id, $lock ) ) {
+				$inactive_lock_ids[] = (int)$lock_row->umeta_id;
+			}
+		}
+	}
+
+	$exclude_inactive = empty( $inactive_lock_ids ) ? '' : ' AND umlml_lock.umeta_id NOT IN (' . implode( ',', $inactive_lock_ids ) . ')';
+
+	// A lock for the membership's level or for all levels (level 0), or a lock saved before v1.0 that has not been converted yet.
+	return "( EXISTS ( SELECT 1 FROM $wpdb->usermeta umlml_lock WHERE umlml_lock.user_id = u.ID AND umlml_lock.meta_key = 'pmprolml_lock' AND ( umlml_lock.meta_value LIKE '%\"level_id\";i:0;%' OR umlml_lock.meta_value LIKE CONCAT( '%\"level_id\";i:', mu.membership_id, ';%' ) )$exclude_inactive ) OR EXISTS ( SELECT 1 FROM $wpdb->usermeta umlml WHERE umlml.user_id = u.ID AND umlml.meta_key = 'pmprolml' AND umlml.meta_value = '1' ) )";
+}
+
 /*
 	Filter Members List SQL to show only locked members if filtering that way
 */
 function pmprolml_pmpro_members_list_sql($sql) {
 	//only if the level param is passed in and set to locked
 	if ( ! empty( $_REQUEST['l'] ) && 'locked' === sanitize_text_field( wp_unslash( $_REQUEST['l'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list filter parameter.
-		global $wpdb;
-		
 		//tweak SQL to only show locked members
-		$sql = str_replace(
-			"ON mu.membership_id = m.id",
-			"ON mu.membership_id = m.id LEFT JOIN $wpdb->usermeta umlml ON u.ID = umlml.user_id AND umlml.meta_key='pmprolml' LEFT JOIN $wpdb->usermeta umlml_lock ON u.ID = umlml_lock.user_id AND umlml_lock.meta_key='pmprolml_lock' AND ( umlml_lock.meta_value LIKE '%\"level_id\";i:0;%' OR umlml_lock.meta_value LIKE CONCAT( '%\"level_id\";i:', m.id, ';%' ) )",
-			$sql
-		);
-		$sql = str_replace("AND mu.membership_id = '0'", "AND ( umlml.meta_value='1' OR ( umlml_lock.meta_key <> '' AND umlml_lock.meta_key IS NOT NULL ) )", $sql);		
+		$sql = str_replace( "AND mu.membership_id = '0'", 'AND ' . pmprolml_get_locked_members_sql_condition(), $sql );
 	}
 	
 	return $sql;
 }
 add_action('pmpro_members_list_sql', 'pmprolml_pmpro_members_list_sql');
+
+/**
+ * Only export locked members when the Members List is filtered to "Locked".
+ *
+ * @since TBD
+ *
+ * @param string $filter  The SQL that limits the export to the selected level or status.
+ * @param array  $filters The filters that the export was started with.
+ * @return string
+ */
+function pmprolml_pmpro_members_export_filter_sql( $filter, $filters ) {
+	if ( ! empty( $filters['l'] ) && 'locked' === $filters['l'] ) {
+		$filter .= ' AND ' . pmprolml_get_locked_members_sql_condition() . ' ';
+	}
+
+	return $filter;
+}
+add_filter( 'pmpro_members_export_filter_sql', 'pmprolml_pmpro_members_export_filter_sql', 10, 2 );
 
 /**
  * Add "Locked Member" column to CSV export
