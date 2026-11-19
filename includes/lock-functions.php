@@ -205,9 +205,10 @@ function pmprolml_get_checkout_order_id_for_lock( $user_id, $level_id ) {
  *
  * Only orders with a status of "success" and a total greater than zero are counted.
  * When a lock is passed, only payments belonging to the member's current membership are
- * counted: the order that completed when the lock was created (the checkout order) plus
- * any successful orders dated on or after the membership start date. Payments dated
- * before the membership started are not counted.
+ * counted: successful orders dated after the member's previous membership ended, or all
+ * of their successful orders if they have not held this membership before. This includes
+ * the payment that started the current membership, which is dated just before the
+ * membership start date.
  *
  * @since 1.1
  *
@@ -234,27 +235,31 @@ function pmprolml_count_successful_payments_for_user( $user_id, $level_id, $lock
 	// Scope the count to the current membership when we know when the lock was created.
 	// Locks saved before this data was stored count all payments, as they always did.
 	if ( is_array( $lock ) && ! empty( $lock['created'] ) ) {
-		// Both membership start dates and order timestamps are stored in UTC.
 		// Direct queries against PMPro's custom tables; there is no core API or cache for these.
-		if ( ! empty( $level_id ) ) {
-			$startdate = $wpdb->get_var( $wpdb->prepare( "SELECT MIN(startdate) FROM $wpdb->pmpro_memberships_users WHERE user_id = %d AND membership_id = %d AND status = 'active'", $user_id, $level_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		} else {
-			$startdate = $wpdb->get_var( $wpdb->prepare( "SELECT MIN(startdate) FROM $wpdb->pmpro_memberships_users WHERE user_id = %d AND status = 'active'", $user_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		}
+		$level_where = empty( $level_id ) ? '' : $wpdb->prepare( ' AND membership_id = %d', $level_id );
+		$startdate   = $wpdb->get_var( $wpdb->prepare( "SELECT MIN(startdate) FROM $wpdb->pmpro_memberships_users WHERE user_id = %d AND status = 'active'", $user_id ) . $level_where ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
-		// Fall back to the lock creation time if there is no active membership to compare against.
 		if ( empty( $startdate ) || '0000-00-00 00:00:00' === $startdate ) {
+			// There is no active membership to compare against. Fall back to the lock creation time.
 			$since = gmdate( 'Y-m-d H:i:s', (int)$lock['created'] );
 		} else {
-			$since = $startdate;
+			// Membership dates are saved in the site's timezone and order timestamps in UTC, and the order
+			// that starts a membership is saved shortly before the membership itself. So instead of comparing
+			// orders to the start date, count the orders dated after the previous membership ended.
+			// Renewing a level keeps its start date, so rows that ended after that date are part of the current membership.
+			$since        = '';
+			$previous_end = $wpdb->get_var( $wpdb->prepare( "SELECT MAX(enddate) FROM $wpdb->pmpro_memberships_users WHERE user_id = %d AND status <> 'active' AND enddate <= %s", $user_id, $startdate ) . $level_where ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			if ( ! empty( $previous_end ) && '0000-00-00 00:00:00' !== $previous_end ) {
+				$since = get_gmt_from_date( $previous_end );
+			}
 		}
 
-		// The checkout order is created before the membership starts, so include it by ID.
-		if ( ! empty( $lock['first_order_id'] ) ) {
+		// The checkout order can be dated before that, so always include it by ID.
+		if ( ! empty( $since ) && ! empty( $lock['first_order_id'] ) ) {
 			$where[] = '( timestamp >= %s OR id = %d )';
 			$values[] = $since;
 			$values[] = (int)$lock['first_order_id'];
-		} else {
+		} elseif ( ! empty( $since ) ) {
 			$where[] = 'timestamp >= %s';
 			$values[] = $since;
 		}
@@ -276,7 +281,7 @@ function pmprolml_count_successful_payments_for_user( $user_id, $level_id, $lock
  * @param int $level_id The level ID to lock or 0 to lock all levels.
  * @param int $expiration The expiration timestamp or 0 for no expiration.
  * @param int $payments_required The number of successful payments required to unlock, or 0 to not use this criteria.
- *                               Only payments dated on or after the membership start are counted, plus the checkout order that completed in the same request.
+ *                               Only payments made during the current membership are counted, including the payment that started it.
  */
 function pmprolml_add_lock_for_user( $user_id, $level_id, $expiration, $payments_required = 0 ) {
 	// Make sure we have all ints.
