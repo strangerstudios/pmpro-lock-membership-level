@@ -83,17 +83,13 @@ function pmprolml_template_redirect() {
 				// Loop through the levels and see if any are in the same group as the level being purchased.
 				if ( ! empty( $user_levels ) ) {
 					foreach ( $user_levels as $level ) {
-						// If this is the level that the user is purchasing, continue.
-						if ( $level->id == (int)$checkout_level->id ) {
-							continue;
-						}
-
 						// If this level is not in the same group, continue.
 						if ( pmpro_get_group_id_for_level( $level->id ) != $group_id ) {
 							continue;
 						}
 
-						// If we made it this far, the user is going to lose this level after checkout.
+						// If we made it this far, the user is going to lose this level after checkout,
+						// or replace it if this is the level being purchased.
 						$levels_to_check[] = (int)$level->id;
 					}
 				}
@@ -190,7 +186,7 @@ function pmprolml_cancel_should_process( $process, $user ) {
 add_filter( 'pmpro_cancel_should_process', 'pmprolml_cancel_should_process', 10, 2 );
 
 /**
- * Block checkouts that would cause the user to lose a locked level.
+ * Block checkouts that would cause the user to lose or replace a locked level.
  *
  * Same hook-ordering issue as cancellations: core processes checkouts on the 'wp'
  * hook, before the template_redirect guard can run.
@@ -222,7 +218,8 @@ function pmprolml_checkout_checks( $continue ) {
 			$levels_to_check = array();
 			if ( ! empty( $group ) && empty( $group->allow_multiple_selections ) ) {
 				foreach ( $user_levels as $level ) {
-					if ( (int) $level->id === (int) $checkout_level->id || pmpro_get_group_id_for_level( $level->id ) != $group_id ) {
+					// Levels in this group are lost at checkout. The level being purchased is replaced, so check it too.
+					if ( pmpro_get_group_id_for_level( $level->id ) != $group_id ) {
 						continue;
 					}
 					$levels_to_check[] = (int) $level->id;
